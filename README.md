@@ -1,2 +1,2 @@
 # HumanMouse
-A suite of applications designed to capture and validate human mouse movement.
+A suite of applications designed to record and replay human mouse movement.
