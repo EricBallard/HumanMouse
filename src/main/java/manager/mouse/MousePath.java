@@ -6,21 +6,19 @@ import java.util.LinkedList;
 public class MousePath {
 
     public static class Paths {
-        public transient int index = -1;
+        public transient int index = 0;
 
         public int totalPaths;
         public ArrayList<MousePath> list;
 
         public MousePath getNext() {
-            if (index >= totalPaths - 1) return null;
-
-            index++;
+            if (index >= totalPaths) return null;
             return list.get(index);
         }
     }
 
     // Transient modifier excludes from gson
-    public transient int index;
+    public transient int index = 0;
 
     public int xSpan, ySpan;
 
@@ -31,9 +29,7 @@ public class MousePath {
     public LinkedList<MousePoint> points;
 
     public MousePoint getNext() {
-        if (index >= totalPoints - 1) return null;
-
-        index++;
+        if (index >= totalPoints) return null;
         return points.get(index);
     }
 }

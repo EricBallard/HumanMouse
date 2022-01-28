@@ -50,8 +50,8 @@ public class GUI extends Application {
 
     public void toggleRenderer(boolean paused) {
         if (this.controller != null) {
-            this.controller.renderer.state =
-                    paused ? Renderer.State.PAUSED : Renderer.State.RUNNING;
+            this.controller.renderer.state.set(
+                    paused ? Renderer.State.PAUSED : Renderer.State.RUNNING);
         }
     }
 }

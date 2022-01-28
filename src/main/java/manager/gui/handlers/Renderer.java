@@ -8,14 +8,23 @@ import manager.gui.Controller;
 import manager.mouse.MousePath;
 import manager.mouse.MousePoint;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
 
 public class Renderer {
 
     public enum State {
-        RUNNING, STOPPED, PAUSED
+        RUNNING, STOPPED, PAUSED, FINISHED
     }
 
-    public State state;
+    public AtomicReference<State> state;
+
+    public AtomicBoolean repeat;
+
+    boolean drawnInfo;
+
+    MousePath path;
 
     Thread thread;
 
@@ -26,44 +35,44 @@ public class Renderer {
     GraphicsContext graphics;
 
     public Renderer(Controller controller, Canvas canvas) {
+        this.state = new AtomicReference<>(State.STOPPED);
+        this.repeat = new AtomicBoolean(false);
+
         this.controller = controller;
         this.canvas = canvas;
 
         this.graphics = canvas.getGraphicsContext2D();
-        this.graphics.setStroke(Color.GREEN);
-        this.graphics.setFill(Color.GREEN);
-        this.graphics.setLineWidth(2);
+        this.graphics.setFill(Color.YELLOW);
 
         this.thread = initThread();
-        this.state = State.STOPPED;
     }
 
     Thread initThread() {
         return new Thread(() -> {
-            this.state = State.RUNNING;
-            this.graphics.clearRect(0, 0, 512, 512);
+            this.state.set(State.RUNNING);
+            this.clear();
 
             while (!Thread.interrupted()) {
-                if (state == State.RUNNING)
+                if (state.get() == State.RUNNING)
                     draw();
             }
 
-            this.state = State.STOPPED;
+            this.state.set(State.STOPPED);
         });
     }
 
     public synchronized void start() {
         if (this.thread != null) {
-            if (this.state == State.STOPPED)
+            if (this.state.get() == State.STOPPED)
                 this.thread.start();
 
-            this.state = State.RUNNING;
+            this.state.set(State.RUNNING);
         }
     }
 
     public void pause() {
-        if (this.thread != null)
-            this.state = State.PAUSED;
+        if (this.thread != null && this.state.get() != State.FINISHED)
+            this.state.set(State.PAUSED);
     }
 
     public synchronized void stop() {
@@ -72,16 +81,12 @@ public class Renderer {
     }
 
     public void drawTotalPaths(String fileName) {
-        this.graphics.setFill(Color.YELLOW);
-
         graphics.setFont(new Font("Arial", 12));
         graphics.fillText(fileName, 10, 40);
         graphics.fillText("Total Paths: " + controller.paths.totalPaths, 10, 60);
     }
 
-    private void drawPathInfo(MousePath path) {
-        this.graphics.setFill(Color.YELLOW);
-
+    public void drawPathInfo(MousePath path) {
         graphics.fillText("#: " + (controller.paths.index + 1) + "/" + controller.paths.totalPaths, 10, 40);
 
         graphics.fillText("Time: " + path.totalTime, 10, 60);
@@ -91,13 +96,19 @@ public class Renderer {
         graphics.fillText("Y-Span: " + path.ySpan, 10, 120);
     }
 
-    /* ~~~~~~~~~~~~~~~~~~ Draw ~~~~~~~~~~~~~~~~~ */
+    public void clear() {
+        this.graphics.clearRect(0, 0, 512, 512);
+    }
 
-    MousePath path;
+    public void reset() {
+        drawnInfo = true;
+        repeated = false;
+        path = null;
 
-    boolean drawnInfo;
+        clear();
+    }
 
-    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+    boolean repeated = false;
 
     public void draw() {
         MousePoint next;
@@ -105,23 +116,48 @@ public class Renderer {
         // Get next path
         if (path == null
                 && (path = controller.paths.getNext()) == null) {
+
+            System.out.print("next is null");
+
             return;
             // Get next point in path
         } else if ((next = path.getNext()) == null) {
             try {
-
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            } finally {
-                if (state == State.PAUSED)
+            } catch (InterruptedException ignored) {
+            }
+
+            // Honor pause
+            if (state.get() == State.PAUSED)
+                return;
+                // Honor repeat
+            else if (repeat.get()) {
+                if (!repeated) {
+                    repeated = true;
+                    drawnInfo = false;
+                    path.index = -1;
+                    clear();
                     return;
+                }
             }
 
             // Ignore clear on  last path
-            if (controller.paths.index + 1 != controller.paths.totalPaths)
-                graphics.clearRect(0, 0, 512, 512);
+            if (controller.paths.index >= controller.paths.totalPaths - 1) {
+                System.out.println("Finsihed");
+
+                state.set(State.FINISHED);
+                controller.resetPlayButtton();
+            } else
+                this.clear();
+
             drawnInfo = false;
+            repeated = false;
             path = null;
+
+            controller.paths.index++;
+
+            System.out.println(controller.paths.index + "/" + controller.paths.totalPaths );
+
             return;
         }
 
@@ -142,6 +178,10 @@ public class Renderer {
         }
 
         // Draw points
-        graphics.fillOval(next.ox / 2 - 2, next.oy / 2 - 2, 4, 4);
+        int x = next.ox / 2 - 2,
+                y = next.oy / 2 - 2;
+
+        graphics.fillOval(x, y, 4, 4);
+        path.index++;
     }
 }

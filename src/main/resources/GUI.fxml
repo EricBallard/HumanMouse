@@ -24,18 +24,18 @@
               <columnConstraints>
                   <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="55.0" />
                   <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="55.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="55.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="55.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="55.0" />
-                  <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="55.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="110.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="60.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="75.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="65.0" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="40.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="100.0" />
                   <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="45.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints maxHeight="100.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ToggleButton fx:id="Play_Btn" disable="true" mnemonicParsing="false" text="PLAY" GridPane.columnIndex="3">
+                  <ToggleButton fx:id="Play_Btn" disable="true" minWidth="65.0" mnemonicParsing="false" text="PLAY" GridPane.columnIndex="3">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor></ToggleButton>

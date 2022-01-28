@@ -50,15 +50,35 @@ public class Controller implements Initializable {
         this.gui.stage.setOnCloseRequest(e -> this.renderer.stop());
 
         /* Init Toolbar actions */
-
         Load_Btn.setOnAction(buttons::openFileChooser);
 
         Play_Btn.setOnAction(buttons::playPaths);
 
+        Repeat_Btn.setOnAction(e -> renderer.repeat.set(!renderer.repeat.get()));
+
+        Previous_Btn.setOnAction(buttons::previousPath);
+
+        Next_Btn.setOnAction(buttons::nextPath);
+
+        Delete_Btn.setOnAction(buttons::deletePath);
     }
 
     public void setPaths(MousePath.Paths paths) {
         this.paths = paths;
+    }
+
+    public void rewindPaths() {
+        this.paths.index = 0;
+        this.paths.list.forEach(path -> path.index = 0);
+        this.renderer.state.set(Renderer.State.PAUSED);
+        this.renderer.clear();
+    }
+
+    public void resetPlayButtton() {
+        Platform.runLater(() -> {
+            Play_Btn.setSelected(false);
+            Play_Btn.setText("RESTART");
+        });
     }
 
     public void toggleToolbarButtons(boolean disabled, String fileName) {
@@ -66,13 +86,16 @@ public class Controller implements Initializable {
         Demo_Btn.setDisable(disabled);
         Play_Btn.setDisable(disabled);
         Repeat_Btn.setDisable(disabled);
-        Delete_Btn.setDisable(disabled);
-        Previous_Btn.setDisable(disabled);
-        Next_Btn.setDisable(disabled);
 
         if (!disabled)
             Play_Btn.requestFocus();
 
         renderer.drawTotalPaths(fileName);
+    }
+
+    public void togglePathButtons(boolean disabled) {
+        Previous_Btn.setDisable(disabled);
+        Next_Btn.setDisable(disabled);
+        Delete_Btn.setDisable(disabled);
     }
 }
