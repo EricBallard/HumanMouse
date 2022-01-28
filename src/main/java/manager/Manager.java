@@ -5,10 +5,7 @@ import manager.gui.GUI;
 
 public class Manager {
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("HELLO WORLD!");
-
-        GUI gui = new GUI();
-        Application.launch(gui.getClass());
+    public static void main(String[] args) {
+        Application.launch(GUI.class);
     }
 }

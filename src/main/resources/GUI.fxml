@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ToggleButton?>
@@ -8,42 +9,68 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="manager.gui.GUI">
+<GridPane prefHeight="512.0" prefWidth="512.0" style="-fx-background-color: #252525;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <rowConstraints>
       <RowConstraints maxHeight="40.0" valignment="CENTER" vgrow="ALWAYS" />
       <RowConstraints prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
    </rowConstraints>
    <columnConstraints>
-      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" prefWidth="100.0" />
+      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="512.0" />
    </columnConstraints>
    <children>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
          <items>
             <GridPane>
               <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="80.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="80.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="80.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="80.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="80.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="80.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="80.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="55.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="55.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="55.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="55.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="55.0" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="55.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="110.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="45.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints maxHeight="100.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ToggleButton disable="true" mnemonicParsing="false" text="PLAY" />
-                  <ToggleButton disable="true" mnemonicParsing="false" text="REPEAT" GridPane.columnIndex="1" />
-                  <ToggleButton disable="true" mnemonicParsing="false" text="&lt;&lt;" GridPane.columnIndex="2" />
-                  <ToggleButton disable="true" mnemonicParsing="false" text="DELETE PATH" GridPane.columnIndex="3" />
-                  <ToggleButton disable="true" mnemonicParsing="false" text="&gt;&gt;" GridPane.columnIndex="4" />
-                <Button mnemonicParsing="false" text="LOAD" GridPane.columnIndex="6" />
-                  <Button disable="true" mnemonicParsing="false" text="SAVE" GridPane.columnIndex="5" />
+                  <ToggleButton fx:id="Play_Btn" disable="true" mnemonicParsing="false" text="PLAY" GridPane.columnIndex="3">
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor></ToggleButton>
+                  <ToggleButton fx:id="Repeat_Btn" disable="true" mnemonicParsing="false" text="REPEAT" GridPane.columnIndex="4">
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor></ToggleButton>
+                  <ToggleButton fx:id="Demo_Btn" disable="true" mnemonicParsing="false" text="DEMO" GridPane.columnIndex="2">
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor></ToggleButton>
+                <Button fx:id="Load_Btn" mnemonicParsing="false" text="LOAD" GridPane.columnIndex="1">
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor></Button>
+                  <Button fx:id="Save_Btn" disable="true" mnemonicParsing="false" text="SAVE">
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor></Button>
+                  <Button fx:id="Delete_Btn" disable="true" mnemonicParsing="false" text="DELETE PATH" GridPane.columnIndex="6">
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor></Button>
+                  <Button fx:id="Previous_Btn" disable="true" mnemonicParsing="false" text="&lt;&lt;" GridPane.columnIndex="5">
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor></Button>
+                  <Button fx:id="Next_Btn" disable="true" mnemonicParsing="false" text="&gt;&gt;" GridPane.columnIndex="7">
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor></Button>
                </children>
             </GridPane>
          </items>
       </ToolBar>
-      <Canvas height="360.0" width="600.0" GridPane.rowIndex="1" />
+      <Canvas fx:id="Canvas" height="472.0" width="512.0" GridPane.rowIndex="1" />
    </children>
 </GridPane>

@@ -1,0 +1,30 @@
+.button, .toggle-button{
+  -fx-background-color: #858585;
+  -fx-text-fill: black;
+  -fx-cursor: hand;
+}
+
+.button:focused, .toggle-button:focused {
+  -fx-effect: dropshadow( gaussian , yellow , 2,0,0,1 );
+}
+
+.button:hover, .toggle-button:hover{
+  -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 20,0,0,1 );
+  -fx-effect: innershadow( gaussian , rgba(0,0,0,0.7) , 10,0,0,0 );
+}
+
+.button:pressed, .toggle-button:pressed{
+  -fx-background-color: #454545;
+  -fx-cursor: closed_hand;
+}
+
+.toggle-button:selected {
+  -fx-text-fill: #858585;
+  -fx-background-color: #454545;
+  -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 20,0,0,1 );
+  -fx-effect: innershadow( gaussian , rgba(0,0,0,0.7) , 10,0,0,0 );
+}
+
+.tool-bar{
+  -fx-background-color: #505050;
+}
