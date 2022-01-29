@@ -1,3 +1,4 @@
+/* Tool-bar; Button/ToggleButton */
 .button, .toggle-button{
   -fx-background-color: #858585;
   -fx-text-fill: black;
@@ -27,4 +28,25 @@
 
 .tool-bar{
   -fx-background-color: #505050;
+}
+
+/* Alert */
+.dialog-pane{
+    -fx-background-color: #505050;
+}
+.dialog-pane > *.button-bar > *.container{
+    -fx-background-color: #505050;
+}
+.dialog-pane > *.label.content{
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #252525;
+}
+.dialog-pane:header *.header-panel{
+    -fx-background-color: #252525;
+}
+.dialog-pane:header *.header-panel *.label{
+    -fx-font-size: 18px;
+    -fx-font-style: italic;
+    -fx-text-fill: #757575;
 }

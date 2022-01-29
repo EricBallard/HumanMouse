@@ -22,6 +22,8 @@ public class Renderer {
 
     public AtomicBoolean repeat;
 
+    public AtomicBoolean demo;
+
     boolean drawnInfo;
 
     MousePath path;
@@ -37,6 +39,7 @@ public class Renderer {
     public Renderer(Controller controller, Canvas canvas) {
         this.state = new AtomicReference<>(State.STOPPED);
         this.repeat = new AtomicBoolean(false);
+        this.demo = new AtomicBoolean(false);
 
         this.controller = controller;
         this.canvas = canvas;
@@ -96,6 +99,14 @@ public class Renderer {
 
         graphics.fillText("X-Span: " + path.xSpan, 10, 100);
         graphics.fillText("Y-Span: " + path.ySpan, 10, 120);
+    }
+
+    public void drawPoint(boolean a, double x, double y) {
+        if (y < 30)
+            return;
+
+        graphics.setFill(a ? Color.YELLOW : Color.PURPLE);
+        graphics.fillOval(x - 5, y - 5, 10, 10);
     }
 
     public void clear() {

@@ -3,6 +3,7 @@ package manager.gui;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 
@@ -29,7 +30,7 @@ public class Controller implements Initializable {
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-    GUI gui;
+    public GUI gui;
 
     Buttons buttons;
 
@@ -56,6 +57,8 @@ public class Controller implements Initializable {
 
         Play_Btn.setOnAction(buttons::playPaths);
 
+        Demo_Btn.setOnAction(buttons::demoPaths);
+
         Repeat_Btn.setOnAction(e -> renderer.repeat.set(!renderer.repeat.get()));
 
         Previous_Btn.setOnAction(e -> buttons.adjustIndex(false, false));
@@ -63,6 +66,9 @@ public class Controller implements Initializable {
         Next_Btn.setOnAction(e -> buttons.adjustIndex(true, false));
 
         Delete_Btn.setOnAction(e -> buttons.adjustIndex(paths.index == 0, true));
+
+        /* Init Demo actions */
+        Canvas.onMouseClickedProperty().set(buttons.setDemoPoint());
     }
 
     public void setPaths(MousePath.Paths paths) {
@@ -99,5 +105,9 @@ public class Controller implements Initializable {
         Previous_Btn.setDisable(disabled);
         Next_Btn.setDisable(disabled);
         Delete_Btn.setDisable(disabled);
+    }
+
+    public void setCanvasCursor(Cursor cursor) {
+        Canvas.setCursor(cursor);
     }
 }

@@ -18,7 +18,7 @@ public class GUI extends Application {
 
     Controller controller;
 
-    Stage stage;
+    public Stage stage;
 
     @Override
     public void start(Stage stage) {

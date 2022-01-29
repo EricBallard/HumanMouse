@@ -1,14 +1,26 @@
 package manager.gui.handlers;
 
+import javafx.beans.Observable;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Cursor;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import manager.files.Files;
 import manager.gui.Controller;
 
 import java.io.File;
 
 public class Buttons {
+
+    boolean shownInfo;
 
     Controller controller;
 
@@ -27,13 +39,14 @@ public class Buttons {
 
     public void openFileSaver(ActionEvent e) {
         FileChooser files = getFileChooser("Save");
-        File selected = files.showSaveDialog(null);
+        File selected = files.showSaveDialog(controller.gui.stage);
 
         if (selected != null) Files.save(selected, controller);
     }
+
     public void openFileLoader(ActionEvent e) {
         FileChooser files = getFileChooser("Load");
-        File selected = files.showOpenDialog(null);
+        File selected = files.showOpenDialog(controller.gui.stage);
 
         if (selected != null) Files.load(selected, controller);
     }
@@ -72,8 +85,7 @@ public class Buttons {
         }
 
         // Step index and reset target path
-        index = controller.paths.totalPaths == 1 ? 0 :
-                forward && delete ? index : (forward ? index + 1 : index - 1);
+        index = controller.paths.totalPaths == 1 ? 0 : forward && delete ? index : (forward ? index + 1 : index - 1);
 
         controller.paths.index = index;
         controller.paths.list.get(index).index = 0;
@@ -83,4 +95,54 @@ public class Buttons {
         controller.renderer.drawPathInfo(controller.paths.list.get(index));
     }
 
+    public void demoPaths(ActionEvent e) {
+        boolean selected = ((ToggleButton) e.getSource()).isSelected();
+
+        if (selected) {
+            // Start
+            showInfo();
+            controller.renderer.clear();
+            controller.setCanvasCursor(Cursor.CROSSHAIR);
+            controller.renderer.demo.set(true);
+        } else {
+            // Stop
+            controller.renderer.clear();
+            controller.setCanvasCursor(Cursor.DEFAULT);
+            controller.renderer.demo.set(false);
+        }
+    }
+
+    void showAlert(Dialog dialog) {
+        dialog.initStyle(StageStyle.TRANSPARENT);
+        Stage mainStage = controller.gui.stage;
+
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getStylesheets().add(mainStage.getScene().getStylesheets().get(0));
+
+
+        dialog.show();
+        shownInfo = true;
+    }
+
+    void showInfo() {
+        if (shownInfo) return;
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("HumanMouse-Manager | DEMO");
+        alert.setHeaderText("For your information");
+        alert.setContentText("Left-Click to set 1st point,\nRight-Click to set 2nd point.\n\n" + "A path will be built and drawn between these points,clicking either button\n" + "again will start a new path!");
+
+        alert.initOwner(controller.gui.stage);
+        showAlert(alert);
+    }
+
+    public EventHandler<? super MouseEvent> setDemoPoint() {
+        return (EventHandler<MouseEvent>) e -> {
+            if (!controller.renderer.demo.get())
+                return;
+
+            boolean pointA = e.getButton() == MouseButton.PRIMARY;
+            controller.renderer.drawPoint(pointA, e.getX(), e.getY());
+        };
+    }
 }
