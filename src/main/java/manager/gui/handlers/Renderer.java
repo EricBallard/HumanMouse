@@ -81,6 +81,8 @@ public class Renderer {
     }
 
     public void drawTotalPaths(String fileName) {
+        clear();
+
         graphics.setFont(new Font("Arial", 12));
         graphics.fillText(fileName, 10, 40);
         graphics.fillText("Total Paths: " + controller.paths.totalPaths, 10, 60);
@@ -116,9 +118,6 @@ public class Renderer {
         // Get next path
         if (path == null
                 && (path = controller.paths.getNext()) == null) {
-
-            System.out.print("next is null");
-
             return;
             // Get next point in path
         } else if ((next = path.getNext()) == null) {
@@ -143,8 +142,6 @@ public class Renderer {
 
             // Ignore clear on  last path
             if (controller.paths.index >= controller.paths.totalPaths - 1) {
-                System.out.println("Finsihed");
-
                 state.set(State.FINISHED);
                 controller.resetPlayButtton();
             } else
@@ -155,9 +152,6 @@ public class Renderer {
             path = null;
 
             controller.paths.index++;
-
-            System.out.println(controller.paths.index + "/" + controller.paths.totalPaths );
-
             return;
         }
 

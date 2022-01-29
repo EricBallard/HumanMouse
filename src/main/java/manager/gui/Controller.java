@@ -50,17 +50,19 @@ public class Controller implements Initializable {
         this.gui.stage.setOnCloseRequest(e -> this.renderer.stop());
 
         /* Init Toolbar actions */
-        Load_Btn.setOnAction(buttons::openFileChooser);
+        Save_Btn.setOnAction(buttons::openFileSaver);
+
+        Load_Btn.setOnAction(buttons::openFileLoader);
 
         Play_Btn.setOnAction(buttons::playPaths);
 
         Repeat_Btn.setOnAction(e -> renderer.repeat.set(!renderer.repeat.get()));
 
-        Previous_Btn.setOnAction(buttons::previousPath);
+        Previous_Btn.setOnAction(e -> buttons.adjustIndex(false, false));
 
-        Next_Btn.setOnAction(buttons::nextPath);
+        Next_Btn.setOnAction(e -> buttons.adjustIndex(true, false));
 
-        Delete_Btn.setOnAction(buttons::deletePath);
+        Delete_Btn.setOnAction(e -> buttons.adjustIndex(paths.index == 0, true));
     }
 
     public void setPaths(MousePath.Paths paths) {
