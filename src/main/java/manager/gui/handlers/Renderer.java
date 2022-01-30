@@ -190,10 +190,11 @@ public class Renderer {
         }
 
         // Draw points
-        int x = next.ox / 2 - 2,
-                y = next.oy / 2 - 2;
-
-        graphics.fillOval(x, y, 4, 4);
+        drawCircle(next.ox, next.oy, true);
         path.index++;
+    }
+
+    public void drawCircle(int x, int y, boolean adjust) {
+        graphics.fillOval((adjust ? x / 2 : x) - 2, (adjust ? y / 2 : y) - 2, 4, 4);
     }
 }

@@ -16,4 +16,11 @@ public class MousePoint {
         this.oy = y;
     }
 
+    public MousePoint(int x, int y, long delay) {
+        this.x = 0;
+        this.y = 0;
+        this.ox = x;
+        this.oy = y;
+        this.delay = delay;
+    }
 }
