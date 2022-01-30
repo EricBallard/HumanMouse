@@ -1,6 +1,5 @@
 package manager.gui.handlers;
 
-import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -15,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import manager.files.Files;
 import manager.gui.Controller;
+import manager.mouse.MousePoint;
 
 import java.io.File;
 
@@ -55,9 +55,13 @@ public class Buttons {
         ToggleButton btn = (ToggleButton) e.getSource();
 
         if (btn.isSelected()) {
-            controller.togglePathButtons(true);
+            // TODO - stop demo  or something?
 
             // Re/Start/Resume
+            controller.togglePathButtons(true);
+            controller.disableToggleButton(false);
+            controller.renderer.toggleDemo(false);
+
             if (controller.renderer.state.get() == Renderer.State.FINISHED) controller.rewindPaths();
 
             controller.renderer.start();
@@ -99,16 +103,23 @@ public class Buttons {
         boolean selected = ((ToggleButton) e.getSource()).isSelected();
 
         if (selected) {
+            controller.togglePathButtons(true);
+
+            if (controller.renderer.state.get() == Renderer.State.RUNNING) {
+                controller.disableToggleButton(true);
+                controller.renderer.pause();
+            }
+
             // Start
             showInfo();
             controller.renderer.clear();
             controller.setCanvasCursor(Cursor.CROSSHAIR);
-            controller.renderer.demo.set(true);
+            controller.renderer.toggleDemo(true);
         } else {
             // Stop
             controller.renderer.clear();
             controller.setCanvasCursor(Cursor.DEFAULT);
-            controller.renderer.demo.set(false);
+            controller.renderer.toggleDemo(false);
         }
     }
 
@@ -142,7 +153,31 @@ public class Buttons {
                 return;
 
             boolean pointA = e.getButton() == MouseButton.PRIMARY;
-            controller.renderer.drawPoint(pointA, e.getX(), e.getY());
+
+            boolean reset = pointA ? controller.pathFinder.start.get() != null
+                    : controller.pathFinder.end.get() != null;
+
+            int x = (int) e.getX(), y = (int) e.getY();
+
+            // Reset
+            if (reset) {
+                controller.pathFinder.reset();
+                controller.renderer.clear();
+            }
+
+            // Set point
+            if (pointA)
+                controller.pathFinder.start.set(new MousePoint(x, y));
+            else
+                controller.pathFinder.end.set(new MousePoint(x, y));
+
+            // Draw point
+            controller.renderer.drawPoint(pointA, x, y);
+
+            // Find path
+            if (controller.pathFinder.pointsSet())
+                controller.pathFinder.execute();
+
         };
     }
 }

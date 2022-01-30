@@ -14,6 +14,7 @@ import javafx.scene.canvas.Canvas;
 import manager.gui.handlers.Buttons;
 import manager.gui.handlers.Renderer;
 import manager.mouse.MousePath;
+import manager.mouse.PathFinder;
 
 public class Controller implements Initializable {
 
@@ -34,13 +35,17 @@ public class Controller implements Initializable {
 
     Buttons buttons;
 
+
     public MousePath.Paths paths;
+
+    public PathFinder pathFinder;
 
     public Renderer renderer;
 
     public Controller(GUI gui) {
         this.gui = gui;
         this.buttons = new Buttons(this);
+        this.pathFinder = new PathFinder(this);
     }
 
 
@@ -109,5 +114,13 @@ public class Controller implements Initializable {
 
     public void setCanvasCursor(Cursor cursor) {
         Canvas.setCursor(cursor);
+    }
+
+    public void disableToggleButton(boolean demo) {
+        if (demo) {
+            Play_Btn.setSelected(false);
+            Play_Btn.setText("RESUME");
+        } else
+            Demo_Btn.setSelected(false);
     }
 }

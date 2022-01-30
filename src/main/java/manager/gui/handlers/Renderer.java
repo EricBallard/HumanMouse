@@ -83,6 +83,13 @@ public class Renderer {
             this.thread.interrupt();
     }
 
+    public void toggleDemo(boolean enabled) {
+        this.demo.set(enabled);
+
+        if (!enabled)
+            this.graphics.setFill(Color.YELLOW);
+    }
+
     public void drawTotalPaths(String fileName) {
         clear();
 
@@ -145,7 +152,7 @@ public class Renderer {
                 if (!repeated) {
                     repeated = true;
                     drawnInfo = false;
-                    path.index = -1;
+                    path.index = 0;
                     clear();
                     return;
                 }

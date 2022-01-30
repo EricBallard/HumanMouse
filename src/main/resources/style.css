@@ -28,6 +28,7 @@
 
 .tool-bar{
   -fx-background-color: #505050;
+  -fx-cursor: default;
 }
 
 /* Alert */
