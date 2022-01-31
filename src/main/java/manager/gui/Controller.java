@@ -120,7 +120,13 @@ public class Controller implements Initializable {
         if (demo) {
             Play_Btn.setSelected(false);
             Play_Btn.setText("RESUME");
-        } else
+        } else {
             Demo_Btn.setSelected(false);
+            toggleCanvas(false);
+        }
+    }
+
+    public void toggleCanvas(boolean disabled) {
+        Canvas.setDisable(disabled);
     }
 }

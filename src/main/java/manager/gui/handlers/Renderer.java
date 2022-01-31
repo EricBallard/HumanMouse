@@ -64,7 +64,7 @@ public class Renderer {
         });
     }
 
-    public synchronized void start() {
+    public void start() {
         if (this.thread != null) {
             if (this.state.get() == State.STOPPED)
                 this.thread.start();
@@ -78,16 +78,23 @@ public class Renderer {
             this.state.set(State.PAUSED);
     }
 
-    public synchronized void stop() {
+    public void stop() {
         if (this.thread != null)
             this.thread.interrupt();
     }
 
     public void toggleDemo(boolean enabled) {
-        this.demo.set(enabled);
+        demo.set(enabled);
 
-        if (!enabled)
-            this.graphics.setFill(Color.YELLOW);
+        if (!enabled) {
+            graphics.setFill(Color.YELLOW);
+            controller.paths.index = 0;
+        }
+    }
+
+    public void drawText(String text) {
+        graphics.setFill(Color.YELLOW);
+        graphics.fillText(text, 10, 40);
     }
 
     public void drawTotalPaths(String fileName) {
@@ -99,6 +106,7 @@ public class Renderer {
     }
 
     public void drawPathInfo(MousePath path) {
+        graphics.setFill(Color.YELLOW);
         graphics.fillText("#: " + (controller.paths.index + 1) + "/" + controller.paths.totalPaths, 10, 40);
 
         graphics.fillText("Time: " + path.totalTime, 10, 60);
@@ -106,6 +114,10 @@ public class Renderer {
 
         graphics.fillText("X-Span: " + path.xSpan, 10, 100);
         graphics.fillText("Y-Span: " + path.ySpan, 10, 120);
+    }
+
+    public void drawCircle(int x, int y, boolean adjust) {
+        graphics.fillOval((adjust ? x / 2 : x) - 2, (adjust ? y / 2 : y) - 2, 4, 4);
     }
 
     public void drawPoint(boolean a, double x, double y) {
@@ -117,7 +129,7 @@ public class Renderer {
     }
 
     public void clear() {
-        this.graphics.clearRect(0, 0, 512, 512);
+        graphics.clearRect(0, 0, 512, 512);
     }
 
     public void reset() {
@@ -192,9 +204,5 @@ public class Renderer {
         // Draw points
         drawCircle(next.ox, next.oy, true);
         path.index++;
-    }
-
-    public void drawCircle(int x, int y, boolean adjust) {
-        graphics.fillOval((adjust ? x / 2 : x) - 2, (adjust ? y / 2 : y) - 2, 4, 4);
     }
 }

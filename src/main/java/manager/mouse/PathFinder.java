@@ -1,13 +1,11 @@
 package manager.mouse;
 
+import javafx.util.Pair;
 import manager.gui.Controller;
-import manager.gui.handlers.Renderer;
 
 import javax.annotation.Nullable;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PathFinder {
@@ -31,7 +29,7 @@ public class PathFinder {
         return this.start.get() != null && this.end.get() != null;
     }
 
-    final static int xSpanThreshold = 25, ySpanThreshold = 25;
+    final static int xSpanThreshold = 50, ySpanThreshold = 50;
 
     // TODO - human random
     Random ran = new Random();
@@ -45,44 +43,80 @@ public class PathFinder {
         MousePoint spoint = start.get(), epoint = end.get();
 
         // Calculate span
-        int xspan = epoint.ox - spoint.ox, yspan = epoint.oy - spoint.oy;
+        int xSpan = epoint.ox - spoint.ox, ySpan = epoint.oy - spoint.oy;
 
-        System.out.println("Target= xSpan: " + xspan + " | ySpan: " + yspan);
-        ArrayList<MousePath> potentials = new ArrayList<>();
+        System.out.println("Target= xSpan: " + xSpan + " | ySpan: " + ySpan);
+        HashMap<MousePath, Pair<Integer, Integer>> potentials = new HashMap<>();
 
         // Find 3 potential paths near target x/y span
         for (MousePath path : controller.paths.list) {
-            int xSpanDif = Math.abs(path.xSpan - xspan);
+            int xSpanDif = Math.abs(path.xSpan - xSpan);
 
+            // X-Span meets requirement
             if (xSpanDif <= xSpanThreshold) {
-                // X-Span meets requirement
-                int ySpanDif = Math.abs(path.ySpan - yspan);
+                int ySpanDif = Math.abs(path.ySpan - ySpan);
 
+                // Y-Span meets requirement
                 if (ySpanDif <= ySpanThreshold) {
-                    // Y-Span meets requirement
-                    potentials.add(path);
-
-                    if (potentials.size() == 3) break;
+                    potentials.put(path, new Pair<>(xSpanDif, ySpanDif));
+                    // if (potentials.size() == 3) break;
                 }
             }
         }
 
+        // Sort
+        List<MousePath> keys = new ArrayList<>(potentials.keySet());
+        LinkedList<MousePath> sorted = new LinkedList<>();
+
+        final int total = potentials.size();
+        for (int index = 0; index < total; index++) {
+            MousePath mp = keys.get(index);
+
+            if (sorted.isEmpty()) sorted.addFirst(mp);
+            else {
+                Pair<Integer, Integer> spans = potentials.get(mp);
+                int targetIndex = -1, totalSorted = sorted.size();
+
+                // Iterate sorted to compare differences
+                for (int i = 0; i < totalSorted; i++) {
+                    MousePath sp = sorted.get(i);
+                    Pair<Integer, Integer> sspans = potentials.get(sp);
+
+                    if (spans.getKey() < sspans.getKey() && spans.getValue() < sspans.getValue()) {
+
+                        targetIndex = i;
+                        break;
+                    }
+                }
+
+                sorted.add(targetIndex != -1 ? targetIndex : totalSorted, mp);
+            }
+        }
+
         // Log time
-        long elapsedTime = startTime - Instant.now().toEpochMilli();
-        System.out.println("TIME: " + elapsedTime + "ms");
+        long elapsedTime = Instant.now().toEpochMilli() - startTime;
+        System.out.println(elapsedTime + "ms | POTENTIAL PATHS: " + total);
 
-        int found = potentials.size();
-        System.out.println("POTENTIAL PATHS: " + found);
-
-        return found == 0 ? null : found == 1 ? potentials.get(0) : potentials.get(ran.nextInt(found - 1));
+        // Return random
+        return total == 0 ? null : total == 1 ? sorted.get(0) :
+                sorted.get(ran.nextInt((total > 5 ? 5 : total) - 1));
     }
 
     boolean drawnInfo;
     MousePath path;
 
     public void execute() {
+        controller.toggleCanvas(true);
+
         // Get human path that resembles our needed x/y span
-        if (path == null && (path = this.get()) == null) return;
+        if (path == null && (path = this.get()) == null) {
+            controller.renderer.drawText("NO SUITABLE PATHS FOUND");
+            controller.toggleCanvas(false);
+            return;
+        }
+
+        // Cache index of reference path
+        controller.paths.index = controller.paths.list.indexOf(path);
 
         // Rebuild path for target coordinates
         final MousePoint spoint = start.get(), epoint = end.get();
@@ -100,6 +134,7 @@ public class PathFinder {
 
         rebuild.add(epoint);
         rebuild.calculate();
+
         path = rebuild;
 
         new Thread(() -> {
@@ -107,6 +142,7 @@ public class PathFinder {
                 // Draw path
                 MousePoint next;
                 if ((next = path.getNext()) == null) {
+                    controller.toggleCanvas(false);
                     System.out.println(" PATH is drawn");
                     drawnInfo = false;
                     path = null;
