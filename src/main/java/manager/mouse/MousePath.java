@@ -13,6 +13,11 @@ public class MousePath {
         public int totalPaths;
         public ArrayList<MousePath> list;
 
+        public Paths() {
+            this.totalPaths = 0;
+            this.list = new ArrayList<>();
+        }
+
         public MousePath getNext() {
             if (index >= totalPaths) return null;
             return list.get(index);
@@ -47,6 +52,33 @@ public class MousePath {
     public void add(MousePoint mp) {
         points.addLast(mp);
         totalPoints++;
+    }
+
+    public static MousePath translate(MousePath path, MousePoint start) {
+        MousePath translated = new MousePath();
+        translated.add(start);
+
+        MousePoint last = null;
+        for (MousePoint p : path.points) {
+            int ax = (last == null ? start.ox : last.ox) + p.x,
+                    ay = (last == null ? start.oy : last.oy) + p.y;
+
+            MousePoint ap = new MousePoint(ax, ay, p.delay);
+            translated.add(ap);
+            last = ap;
+        }
+
+        //translated.add(end);
+        translated.calculate();
+        return translated;
+    }
+
+    public static MousePath adjust(MousePath path, MousePoint end) {
+        MousePath adjusted = new MousePath();
+
+
+        adjusted.calculate();
+        return adjusted;
     }
 
     public void calculate() {

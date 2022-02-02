@@ -10,7 +10,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class PathFinder {
 
+    final static int xSpanThreshold = 50, ySpanThreshold = 50;
+
+    // TODO - human random
+    Random ran = new Random();
+
     Controller controller;
+
+    boolean drawnInfo;
+
+    MousePath path;
 
     public AtomicReference<MousePoint> start, end;
 
@@ -29,14 +38,39 @@ public class PathFinder {
         return this.start.get() != null && this.end.get() != null;
     }
 
-    final static int xSpanThreshold = 50, ySpanThreshold = 50;
+    LinkedList<MousePath> sort(HashMap<MousePath, Pair<Integer, Integer>> potentials) {
+        List<MousePath> keys = new ArrayList<>(potentials.keySet());
+        LinkedList<MousePath> sorted = new LinkedList<>();
 
-    // TODO - human random
-    Random ran = new Random();
+        final int total = potentials.size();
+        for (int index = 0; index < total; index++) {
+            MousePath mp = keys.get(index);
+
+            if (sorted.isEmpty()) sorted.addFirst(mp);
+            else {
+                Pair<Integer, Integer> spans = potentials.get(mp);
+                int targetIndex = -1, totalSorted = sorted.size();
+
+                // Iterate sorted to compare differences
+                for (int i = 0; i < totalSorted; i++) {
+                    MousePath sp = sorted.get(i);
+                    Pair<Integer, Integer> sspans = potentials.get(sp);
+
+                    if (spans.getKey() < sspans.getKey() && spans.getValue() < sspans.getValue()) {
+
+                        targetIndex = i;
+                        break;
+                    }
+                }
+
+                sorted.add(targetIndex != -1 ? targetIndex : totalSorted, mp);
+            }
+        }
+        return sorted;
+    }
 
     @Nullable // Find path from start -> end
     public MousePath get() {
-        System.out.println("Finding pathing..");
         long startTime = Instant.now().toEpochMilli();
 
         // Get set points
@@ -65,33 +99,8 @@ public class PathFinder {
         }
 
         // Sort
-        List<MousePath> keys = new ArrayList<>(potentials.keySet());
-        LinkedList<MousePath> sorted = new LinkedList<>();
-
-        final int total = potentials.size();
-        for (int index = 0; index < total; index++) {
-            MousePath mp = keys.get(index);
-
-            if (sorted.isEmpty()) sorted.addFirst(mp);
-            else {
-                Pair<Integer, Integer> spans = potentials.get(mp);
-                int targetIndex = -1, totalSorted = sorted.size();
-
-                // Iterate sorted to compare differences
-                for (int i = 0; i < totalSorted; i++) {
-                    MousePath sp = sorted.get(i);
-                    Pair<Integer, Integer> sspans = potentials.get(sp);
-
-                    if (spans.getKey() < sspans.getKey() && spans.getValue() < sspans.getValue()) {
-
-                        targetIndex = i;
-                        break;
-                    }
-                }
-
-                sorted.add(targetIndex != -1 ? targetIndex : totalSorted, mp);
-            }
-        }
+        LinkedList<MousePath> sorted = sort(potentials);
+        int total = sorted.size();
 
         // Log time
         long elapsedTime = Instant.now().toEpochMilli() - startTime;
@@ -102,40 +111,25 @@ public class PathFinder {
                 sorted.get(ran.nextInt((total > 5 ? 5 : total) - 1));
     }
 
-    boolean drawnInfo;
-    MousePath path;
-
-    public void execute() {
+    public boolean execute() {
         controller.toggleCanvas(true);
 
         // Get human path that resembles our needed x/y span
         if (path == null && (path = this.get()) == null) {
             controller.renderer.drawText("NO SUITABLE PATHS FOUND");
             controller.toggleCanvas(false);
-            return;
+            return false;
         }
 
-        // Cache index of reference path
+        // Cache index of reference path (for drawing path info)
         controller.paths.index = controller.paths.list.indexOf(path);
 
-        // Rebuild path for target coordinates
-        final MousePoint spoint = start.get(), epoint = end.get();
+        // Translate reference path from start point
+        // MousePath translated = MousePath.translate(path, start.get());
+        path = MousePath.translate(path, start.get());
 
-        MousePath rebuild = new MousePath();
-        rebuild.add(spoint);
-
-        MousePoint last = null;
-        for (MousePoint p : path.points) {
-            int ax = (last == null ? spoint.ox : last.ox) + p.x, ay = (last == null ? spoint.oy : last.oy) + p.y;
-            MousePoint ap = new MousePoint(ax, ay, p.delay);
-            rebuild.add(ap);
-            last = ap;
-        }
-
-        rebuild.add(epoint);
-        rebuild.calculate();
-
-        path = rebuild;
+        // Adjust translated path to ensure it touches end point
+        // path = MousePath.adjust(translated, end.get());
 
         new Thread(() -> {
             while (!Thread.interrupted()) {
@@ -171,5 +165,6 @@ public class PathFinder {
                 path.index++;
             }
         }).start();
+        return true;
     }
 }

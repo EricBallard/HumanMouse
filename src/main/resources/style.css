@@ -1,20 +1,20 @@
-/* Tool-bar; Button/ToggleButton */
-.button, .toggle-button{
+/* Tool-bar; Button/ToggleButton/MenuButton/MenuItem */
+.button, .toggle-button, .menu-item, .menu-button, .context-menu{
   -fx-background-color: #858585;
   -fx-text-fill: black;
   -fx-cursor: hand;
 }
 
-.button:focused, .toggle-button:focused {
+.button:focused, .toggle-button:focused, .menu-item:focused, .menu-button:focused {
   -fx-effect: dropshadow( gaussian , yellow , 2,0,0,1 );
 }
 
-.button:hover, .toggle-button:hover{
+.button:hover, .toggle-button:hover, .menu-item:hover, .menu-button:hover{
   -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 20,0,0,1 );
   -fx-effect: innershadow( gaussian , rgba(0,0,0,0.7) , 10,0,0,0 );
 }
 
-.button:pressed, .toggle-button:pressed{
+.button:pressed, .toggle-button:pressed, .menu-item:pressed, .menu-button:pressed{
   -fx-background-color: #454545;
   -fx-cursor: closed_hand;
 }

@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 
 import java.net.URL;
@@ -21,7 +22,10 @@ public class Controller implements Initializable {
     /* ~~~~~~~~~~~~ FXML References ~~~~~~~~~~~~ */
 
     @FXML
-    Button Save_Btn, Load_Btn, Delete_Btn, Previous_Btn, Next_Btn;
+    MenuItem Merge_Btn, Load_Btn, Save_Btn;
+
+    @FXML
+    Button Delete_Btn, Previous_Btn, Next_Btn;
 
     @FXML
     ToggleButton Demo_Btn, Play_Btn, Repeat_Btn;
@@ -33,8 +37,7 @@ public class Controller implements Initializable {
 
     public GUI gui;
 
-    Buttons buttons;
-
+    public Buttons buttons;
 
     public MousePath.Paths paths;
 
@@ -56,9 +59,11 @@ public class Controller implements Initializable {
         this.gui.stage.setOnCloseRequest(e -> this.renderer.stop());
 
         /* Init Toolbar actions */
-        Save_Btn.setOnAction(buttons::openFileSaver);
+        Load_Btn.setOnAction(buttons::loadPaths);
 
-        Load_Btn.setOnAction(buttons::openFileLoader);
+        Merge_Btn.setOnAction(buttons::mergePaths);
+
+        Save_Btn.setOnAction(buttons::savePaths);
 
         Play_Btn.setOnAction(buttons::playPaths);
 
@@ -127,6 +132,7 @@ public class Controller implements Initializable {
     }
 
     public void toggleCanvas(boolean disabled) {
-        Canvas.setDisable(disabled);
+        //TODO -ensure canvas gets renabled
+        //Canvas.setDisable(disabled);
     }
 }

@@ -24,7 +24,7 @@ public class GUI extends Application {
     public void start(Stage stage) {
         this.stage = stage;
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui.fxml"));
         loader.setController(controller = new Controller(this));
         GridPane root = null;
 

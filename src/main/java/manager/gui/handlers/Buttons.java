@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseButton;
@@ -17,6 +16,7 @@ import manager.gui.Controller;
 import manager.mouse.MousePoint;
 
 import java.io.File;
+import java.util.List;
 
 public class Buttons {
 
@@ -28,27 +28,25 @@ public class Buttons {
         this.controller = controller;
     }
 
-    FileChooser getFileChooser(String title) {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle(title);
+    public void mergePaths(ActionEvent ignored) {
+        FileChooser files = Files.getChooser("Merge");
+        List<File> selected = files.showOpenMultipleDialog(controller.gui.stage);
 
-        chooser.setInitialDirectory(Files.directory);
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
-        return chooser;
+        if (selected != null) Files.merge(selected, controller);
     }
 
-    public void openFileSaver(ActionEvent e) {
-        FileChooser files = getFileChooser("Save");
-        File selected = files.showSaveDialog(controller.gui.stage);
-
-        if (selected != null) Files.save(selected, controller);
-    }
-
-    public void openFileLoader(ActionEvent e) {
-        FileChooser files = getFileChooser("Load");
+    public void loadPaths(ActionEvent ignored) {
+        FileChooser files = Files.getChooser("Load");
         File selected = files.showOpenDialog(controller.gui.stage);
 
         if (selected != null) Files.load(selected, controller);
+    }
+
+    public void savePaths(ActionEvent ignored) {
+        FileChooser files = Files.getChooser("Save");
+        File selected = files.showSaveDialog(controller.gui.stage);
+
+        if (selected != null) Files.save(selected, controller);
     }
 
     public void playPaths(ActionEvent e) {
@@ -123,15 +121,15 @@ public class Buttons {
         }
     }
 
-    void showAlert(Dialog dialog) {
-        dialog.initStyle(StageStyle.TRANSPARENT);
+    void showAlert(Alert alert) {
+        alert.initStyle(StageStyle.TRANSPARENT);
         Stage mainStage = controller.gui.stage;
 
-        DialogPane dialogPane = dialog.getDialogPane();
+        DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(mainStage.getScene().getStylesheets().get(0));
 
 
-        dialog.show();
+        alert.show();
         shownInfo = true;
     }
 
