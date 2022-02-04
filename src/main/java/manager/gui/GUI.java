@@ -1,24 +1,23 @@
 package manager.gui;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import manager.gui.handlers.Renderer;
-import manager.mouse.MousePath;
 
 import java.io.IOException;
 
 public class GUI extends Application {
 
-    // Loaded paths
-    public MousePath.Paths paths;
+    public Stage stage;
+
+    Scene scene;
 
     Controller controller;
-
-    public Stage stage;
 
     @Override
     public void start(Stage stage) {
@@ -26,17 +25,17 @@ public class GUI extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui.fxml"));
         loader.setController(controller = new Controller(this));
-        GridPane root = null;
+        AnchorPane root = null;
 
         try {
             root = loader.load();
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
 
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(
-                getClass().getResource("/style.css").toExternalForm());
+        scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         stage.setScene(scene);
         stage.setHeight(512);
@@ -44,14 +43,8 @@ public class GUI extends Application {
 
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
         stage.setTitle("v1.0 | HumanMouse-Manager");
-        stage.setResizable(false);
         stage.show();
     }
 
-    public void toggleRenderer(boolean paused) {
-        if (this.controller != null) {
-            this.controller.renderer.state.set(
-                    paused ? Renderer.State.PAUSED : Renderer.State.RUNNING);
-        }
-    }
+
 }

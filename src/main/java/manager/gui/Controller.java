@@ -1,17 +1,18 @@
 package manager.gui;
 
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 import manager.gui.handlers.Buttons;
 import manager.gui.handlers.Renderer;
 import manager.mouse.MousePath;
@@ -20,6 +21,15 @@ import manager.mouse.PathFinder;
 public class Controller implements Initializable {
 
     /* ~~~~~~~~~~~~ FXML References ~~~~~~~~~~~~ */
+
+    @FXML
+    GridPane Tool_Grid;
+
+    @FXML
+    ToolBar Tool_Bar;
+
+    @FXML
+    MenuButton Files_Btn;
 
     @FXML
     MenuItem Merge_Btn, Load_Btn, Save_Btn;
@@ -51,7 +61,6 @@ public class Controller implements Initializable {
         this.pathFinder = new PathFinder(this);
     }
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         /* Init Canvas renderer with valid canvas */
@@ -79,7 +88,52 @@ public class Controller implements Initializable {
 
         /* Init Demo actions */
         Canvas.onMouseClickedProperty().set(buttons.setDemoPoint());
+
+        /* Resize */
+        gui.stage.widthProperty().addListener(this::resize);
+        gui.stage.heightProperty().addListener(e -> Canvas.setHeight(gui.stage.getHeight() - 40));
     }
+
+    void resize(Observable o) {
+        double width = gui.stage.getWidth();
+
+        // Canvas
+        Canvas.setWidth(width);
+
+        // Toolbar
+        Tool_Bar.setMinWidth(width - 15);
+        Tool_Grid.setMinWidth(width - 25);
+
+        // Buttons
+        double bwidth = width / 12.8D;
+        Previous_Btn.setMinWidth(bwidth);
+        Next_Btn.setMinWidth(bwidth);
+
+        bwidth = width / 9.3D;
+        Demo_Btn.setMinWidth(bwidth);
+        Play_Btn.setMinWidth(bwidth);
+
+        Files_Btn.setMinWidth(width / 7.87D);
+        Delete_Btn.setMinWidth(width / 5.68D);
+        Repeat_Btn.setMinWidth(width / 8.53D);
+
+        // Fonts
+        adjustFont((int) (width / 100));
+    }
+
+    void adjustFont(int size) {
+        Font font = new Font(Files_Btn.getFont().getFamily(), size < 12 ? 12 : size > 16 ? 16 : size);
+
+        Files_Btn.setFont(font);
+        Demo_Btn.setFont(font);
+        Play_Btn.setFont(font);
+        Repeat_Btn.setFont(font);
+        Previous_Btn.setFont(font);
+
+        Next_Btn.setFont(font);
+        Delete_Btn.setFont(font);
+    }
+
 
     public void setPaths(MousePath.Paths paths) {
         this.paths = paths;

@@ -129,7 +129,8 @@ public class Renderer {
     }
 
     public void clear() {
-        graphics.clearRect(0, 0, 512, 512);
+        graphics.clearRect(0, 0,
+                controller.gui.stage.getWidth(), controller.gui.stage.getHeight());
     }
 
     public void reset() {
