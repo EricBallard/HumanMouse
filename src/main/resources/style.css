@@ -31,6 +31,10 @@
   -fx-cursor: default;
 }
 
+.menu-item {
+    -fx-font-size: 11;
+}
+
 /* Alert */
 .dialog-pane{
     -fx-background-color: #505050;

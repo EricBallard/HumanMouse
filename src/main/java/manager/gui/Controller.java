@@ -118,11 +118,8 @@ public class Controller implements Initializable {
         Repeat_Btn.setMinWidth(width / 8.53D);
 
         // Fonts
-        adjustFont((int) (width / 100));
-    }
-
-    void adjustFont(int size) {
-        Font font = new Font(Files_Btn.getFont().getFamily(), size < 12 ? 12 : size > 16 ? 16 : size);
+        int size = (int) (width / 100);
+        Font font = new Font(Files_Btn.getFont().getFamily(), size < 12 ? 12 : Math.min(size, 16));
 
         Files_Btn.setFont(font);
         Demo_Btn.setFont(font);
@@ -132,8 +129,18 @@ public class Controller implements Initializable {
 
         Next_Btn.setFont(font);
         Delete_Btn.setFont(font);
-    }
 
+        // ContextMenu
+        if (Files_Btn.getWidth() == 0)
+            return;
+
+        String style = "-fx-pref-width: " + (Files_Btn.getWidth() - 30) + "px;" +
+                "-fx-font-size: " + (font.getSize() - 1) + ";";
+
+        Merge_Btn.setStyle(style);
+        Load_Btn.setStyle(style);
+        Save_Btn.setStyle(style);
+    }
 
     public void setPaths(MousePath.Paths paths) {
         this.paths = paths;
