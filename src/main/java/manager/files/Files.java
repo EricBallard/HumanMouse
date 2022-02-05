@@ -2,6 +2,7 @@ package manager.files;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import manager.gui.Controller;
 import manager.mouse.MousePath;
@@ -9,6 +10,8 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Files {
 
@@ -23,28 +26,40 @@ public class Files {
         return chooser;
     }
 
-    public static boolean load(File file, Controller controller) {
-        MousePath.Paths paths;
-        BufferedReader reader;
+    public static void load(File file, Controller controller) {
+        // Lock UI
+        controller.disabled(true);
 
-        try {
-            reader = new BufferedReader(new FileReader(file.getPath()));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
+        new Thread(() -> {
+            MousePath.Paths paths;
+            BufferedReader reader;
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        paths = gson.fromJson(reader, MousePath.Paths.class);
+            try {
+                reader = new BufferedReader(new FileReader(file.getPath()));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
 
-        if (paths != null) {
-            controller.setPaths(paths);
-            controller.toggleToolbarButtons(false, file.getName());
-            System.out.println("Loaded " + paths.totalPaths + " paths!");
-            return true;
-        }
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            paths = gson.fromJson(reader, MousePath.Paths.class);
 
-        return false;
+            // Un-lock UI
+            controller.disabled(false);
+
+            if (paths != null) {
+                Platform.runLater(() -> {
+                    // Set paths
+                    controller.setPaths(paths);
+                    controller.toggleToolbarButtons(false, file.getName());
+
+                    // Unlock UI
+                    controller.disabled(false);
+                });
+
+                System.out.println("Loaded " + paths.totalPaths + " paths!");
+            }
+        }).start();
     }
 
     public static void save(File file, Controller controller) {
@@ -65,10 +80,7 @@ public class Files {
 
         for (File file : selected) {
             // Load paths
-            if (!load(file, controller)) {
-                System.out.println("FAILED TO LOAD FILE: " + file.getName());
-                return;
-            }
+            load(file, controller);
 
             // Cache loaded paths
             if (mergedPaths.list.addAll(controller.paths.list))

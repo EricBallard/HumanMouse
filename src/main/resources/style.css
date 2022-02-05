@@ -55,3 +55,8 @@
     -fx-font-style: italic;
     -fx-text-fill: #757575;
 }
+
+/* Loading Cursor */
+.wait-cursor{
+ -
+}

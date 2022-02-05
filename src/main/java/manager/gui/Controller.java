@@ -198,4 +198,10 @@ public class Controller implements Initializable {
         //TODO -ensure canvas gets renabled
         //Canvas.setDisable(disabled);
     }
+
+    public void disabled(boolean state) {
+        this.gui.scene.setCursor(state ? Cursor.WAIT : Cursor.DEFAULT);
+        Tool_Bar.setDisable(state);
+        toggleCanvas(state);
+    }
 }
