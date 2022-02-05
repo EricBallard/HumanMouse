@@ -95,51 +95,53 @@ public class Controller implements Initializable {
     }
 
     void resize(Observable o) {
-        double width = gui.stage.getWidth();
+        Platform.runLater(() -> {
+            double width = gui.stage.getWidth();
 
-        // Canvas
-        Canvas.setWidth(width);
+            // Canvas
+            Canvas.setWidth(width);
 
-        // Toolbar
-        Tool_Bar.setMinWidth(width - 15);
-        Tool_Grid.setMinWidth(width - 25);
+            // Toolbar
+            Tool_Bar.setMinWidth(width - 15);
+            Tool_Grid.setMinWidth(width - 25);
 
-        // Buttons
-        double bwidth = width / 12.8D;
-        Previous_Btn.setMinWidth(bwidth);
-        Next_Btn.setMinWidth(bwidth);
+            // Buttons
+            double bwidth = width / 12.8D;
+            Previous_Btn.setMinWidth(bwidth);
+            Next_Btn.setMinWidth(bwidth);
 
-        bwidth = width / 9.3D;
-        Demo_Btn.setMinWidth(bwidth);
-        Play_Btn.setMinWidth(bwidth);
+            bwidth = width / 9.3D;
+            Demo_Btn.setMinWidth(bwidth);
+            Play_Btn.setMinWidth(bwidth);
 
-        Files_Btn.setMinWidth(width / 7.87D);
-        Delete_Btn.setMinWidth(width / 5.68D);
-        Repeat_Btn.setMinWidth(width / 8.53D);
+            Files_Btn.setMinWidth(width / 7.87D);
+            Delete_Btn.setMinWidth(width / 5.68D);
+            Repeat_Btn.setMinWidth(width / 8.53D);
 
-        // Fonts
-        int size = (int) (width / 100);
-        Font font = new Font(Files_Btn.getFont().getFamily(), size < 12 ? 12 : Math.min(size, 16));
+            // Fonts
+            int size = (int) (width / 100);
+            Font font = new Font(Files_Btn.getFont().getFamily(), size < 12 ? 12 : Math.min(size, 16));
 
-        Files_Btn.setFont(font);
-        Demo_Btn.setFont(font);
-        Play_Btn.setFont(font);
-        Repeat_Btn.setFont(font);
-        Previous_Btn.setFont(font);
+            Files_Btn.setFont(font);
+            Demo_Btn.setFont(font);
+            Play_Btn.setFont(font);
+            Repeat_Btn.setFont(font);
+            Previous_Btn.setFont(font);
 
-        Next_Btn.setFont(font);
-        Delete_Btn.setFont(font);
+            Next_Btn.setFont(font);
+            Delete_Btn.setFont(font);
 
-        // ContextMenu
-        if (Files_Btn.getWidth() == 0)
-            return;
+            // ContextMenu
+            bwidth = Math.max(45, width / 7.87D - 30);
+            System.out.println(bwidth);
 
-        String style = "-fx-pref-width: " + (Files_Btn.getWidth() - 30) + "px;" +
-                "-fx-font-size: " + (font.getSize() - 1) + ";";
+            String style = "-fx-pref-width: " + bwidth + "px;" +
+                    "-fx-font-size: " + (font.getSize() - 1) + ";";
 
-        Merge_Btn.setStyle(style);
-        Load_Btn.setStyle(style);
-        Save_Btn.setStyle(style);
+            Merge_Btn.setStyle(style);
+            Load_Btn.setStyle(style);
+            Save_Btn.setStyle(style);
+        });
     }
 
     public void setPaths(MousePath.Paths paths) {

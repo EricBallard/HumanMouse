@@ -47,19 +47,17 @@ public class Files {
         return false;
     }
 
-    public static boolean save(File file, Controller controller) {
+    public static void save(File file, Controller controller) {
         try (Writer writer = new FileWriter(file.getPath())) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(controller.paths, writer);
 
             controller.toggleToolbarButtons(false, file.getName());
             System.out.println("Saved paths!");
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Failed to save mouse paths to file due to, " + e.getMessage());
         }
-        return false;
     }
 
     public static void merge(List<File> selected, Controller controller) {

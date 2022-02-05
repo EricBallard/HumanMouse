@@ -161,7 +161,7 @@ public class PathFinder {
                 }
 
                 // Draw points
-                controller.renderer.drawCircle(next.ox, next.oy, false);
+                controller.renderer.drawCircle(next.ox, next.oy);
                 path.index++;
             }
         }).start();
