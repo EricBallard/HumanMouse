@@ -13,18 +13,17 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="512.0" prefWidth="512.0" style="-fx-background-color: #252525;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ToolBar fx:id="Tool_Bar" prefHeight="40.0">
          <items>
             <GridPane fx:id="Tool_Grid">
                <columnConstraints>
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="65.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="85.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="60.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="75.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="65.0" />
-                  <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="45.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="60.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="60.0" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="60.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="100.0" />
                   <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="45.0" />
                </columnConstraints>

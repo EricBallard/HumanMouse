@@ -23,4 +23,8 @@ public class MousePoint {
         this.oy = y;
         this.delay = delay;
     }
+
+    public int distanceTo(MousePoint p) {
+        return (int) Math.sqrt(Math.pow(p.oy - this.oy, 2) + Math.pow(p.ox - this.ox, 2));
+    }
 }

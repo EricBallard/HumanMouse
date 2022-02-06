@@ -8,10 +8,9 @@ import manager.gui.Controller;
 import manager.mouse.MousePath;
 import org.apache.commons.io.FileUtils;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Files {
 
@@ -31,18 +30,8 @@ public class Files {
         controller.disabled(true);
 
         new Thread(() -> {
-            MousePath.Paths paths;
-            BufferedReader reader;
-
-            try {
-                reader = new BufferedReader(new FileReader(file.getPath()));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return;
-            }
-
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            paths = gson.fromJson(reader, MousePath.Paths.class);
+            // Read
+            MousePath.Paths paths = read(file);
 
             // Un-lock UI
             controller.disabled(false);
@@ -62,6 +51,21 @@ public class Files {
         }).start();
     }
 
+    @Nullable
+    static MousePath.Paths read(File file) {
+        BufferedReader reader;
+
+        try {
+            reader = new BufferedReader(new FileReader(file.getPath()));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.fromJson(reader, MousePath.Paths.class);
+    }
+
     public static void save(File file, Controller controller) {
         try (Writer writer = new FileWriter(file.getPath())) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -76,29 +80,38 @@ public class Files {
     }
 
     public static void merge(List<File> selected, Controller controller) {
-        MousePath.Paths mergedPaths = new MousePath.Paths();
+        // Lock UI
+        controller.disabled(true);
 
-        for (File file : selected) {
-            // Load paths
-            load(file, controller);
+        new Thread(() -> {
+            MousePath.Paths mergedPaths = new MousePath.Paths();
 
-            // Cache loaded paths
-            if (mergedPaths.list.addAll(controller.paths.list))
-                mergedPaths.totalPaths += controller.paths.totalPaths;
-            else {
-                System.out.println("FAILED TO ADD PATHS: " + file.getName());
-                return;
+            // Read
+            for (File file : selected) {
+                // Load paths
+                MousePath.Paths paths = read(file);
+
+                // Cache loaded paths
+                if (mergedPaths.list.addAll(paths.list))
+                    mergedPaths.totalPaths += paths.totalPaths;
+                else {
+                    System.out.println("FAILED TO ADD PATHS: " + file.getName());
+                    return;
+                }
             }
-        }
 
+           Platform.runLater(() -> {
+               // Save merged
+               controller.paths = mergedPaths;
+               controller.buttons.savePaths(null);
 
-        // Save merged
-        controller.paths = mergedPaths;
-        controller.buttons.savePaths(null);
+               // Un-lock UI
+               controller.disabled(false);
+           });
 
-        // Log
-        System.out.println("Merged " + selected.size() +
-                " files with a total of " + mergedPaths.totalPaths + " paths!");
-
+            // Log
+            System.out.println("Merged " + selected.size() +
+                    " files with a total of " + mergedPaths.totalPaths + " paths!");
+        }).start();
     }
 }

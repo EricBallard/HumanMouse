@@ -133,7 +133,6 @@ public class Controller implements Initializable {
 
             // ContextMenu
             bwidth = Math.max(45, width / 7.87D - 30);
-            System.out.println(bwidth);
 
             String style = "-fx-pref-width: " + bwidth + "px;" +
                     "-fx-font-size: " + (font.getSize() - 1) + ";";

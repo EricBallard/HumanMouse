@@ -125,11 +125,10 @@ public class PathFinder {
         controller.paths.index = controller.paths.list.indexOf(path);
 
         // Translate reference path from start point
-        // MousePath translated = MousePath.translate(path, start.get());
-        path = MousePath.translate(path, start.get());
+        path.translate(start.get());
 
-        // Adjust translated path to ensure it touches end point
-        // path = MousePath.adjust(translated, end.get());
+        // Verify/adjust path to ensure it touches end point
+        path.verify(end.get());
 
         new Thread(() -> {
             while (!Thread.interrupted()) {
@@ -137,7 +136,6 @@ public class PathFinder {
                 MousePoint next;
                 if ((next = path.getNext()) == null) {
                     controller.toggleCanvas(false);
-                    System.out.println(" PATH is drawn");
                     drawnInfo = false;
                     path = null;
                     break;

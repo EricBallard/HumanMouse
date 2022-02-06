@@ -59,8 +59,11 @@ public class GUI extends Application {
         scene.getStylesheets().add(style);
 
         stage.setScene(scene);
-        stage.setHeight(512);
+
         stage.setWidth(512);
+        stage.setHeight(512);
+        stage.setMinWidth(512);
+        stage.setMinHeight(512);
 
         stage.getIcons().add(new Image(icon));
         stage.setTitle("v" + properties.getProperty("version") + " | HumanMouse-Manager");
