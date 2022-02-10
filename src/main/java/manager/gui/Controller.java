@@ -17,6 +17,7 @@ import manager.gui.handlers.Buttons;
 import manager.gui.handlers.Renderer;
 import manager.mouse.MousePath;
 import manager.mouse.PathFinder;
+import manager.mouse.Paths;
 
 public class Controller implements Initializable {
 
@@ -49,7 +50,7 @@ public class Controller implements Initializable {
 
     public Buttons buttons;
 
-    public MousePath.Paths paths;
+    public Paths paths;
 
     public PathFinder pathFinder;
 
@@ -143,7 +144,7 @@ public class Controller implements Initializable {
         });
     }
 
-    public void setPaths(MousePath.Paths paths) {
+    public void setPaths(Paths paths) {
         this.paths = paths;
     }
 

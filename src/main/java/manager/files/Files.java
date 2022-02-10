@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import manager.gui.Controller;
-import manager.mouse.MousePath;
+import manager.mouse.Paths;
 import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nullable;
@@ -31,7 +31,7 @@ public class Files {
 
         new Thread(() -> {
             // Read
-            MousePath.Paths paths = read(file);
+            Paths paths = read(file);
 
             // Un-lock UI
             controller.disabled(false);
@@ -52,7 +52,7 @@ public class Files {
     }
 
     @Nullable
-    static MousePath.Paths read(File file) {
+    static Paths read(File file) {
         BufferedReader reader;
 
         try {
@@ -63,7 +63,7 @@ public class Files {
         }
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.fromJson(reader, MousePath.Paths.class);
+        return gson.fromJson(reader, Paths.class);
     }
 
     public static void save(File file, Controller controller) {
@@ -84,12 +84,18 @@ public class Files {
         controller.disabled(true);
 
         new Thread(() -> {
-            MousePath.Paths mergedPaths = new MousePath.Paths();
+            Paths mergedPaths = new Paths();
 
             // Read
             for (File file : selected) {
                 // Load paths
-                MousePath.Paths paths = read(file);
+                Paths paths = read(file);
+
+                if (paths == null) {
+                    System.out.println("FAILED TO MERGE, FAILED TO LOAD " + file.getName());
+                    controller.disabled(false);
+                    return;
+                }
 
                 // Cache loaded paths
                 if (mergedPaths.list.addAll(paths.list))
@@ -100,14 +106,14 @@ public class Files {
                 }
             }
 
-           Platform.runLater(() -> {
-               // Save merged
-               controller.paths = mergedPaths;
-               controller.buttons.savePaths(null);
+            Platform.runLater(() -> {
+                // Save merged
+                controller.paths = mergedPaths;
+                controller.buttons.savePaths(null);
 
-               // Un-lock UI
-               controller.disabled(false);
-           });
+                // Un-lock UI
+                controller.disabled(false);
+            });
 
             // Log
             System.out.println("Merged " + selected.size() +

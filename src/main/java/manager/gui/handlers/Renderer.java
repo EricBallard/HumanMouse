@@ -116,8 +116,13 @@ public class Renderer {
         graphics.fillText("Y-Span: " + path.ySpan, 10, 120);
     }
 
-    public void drawCircle(int x, int y) {
-        graphics.fillOval(x - 2, y - 2, 4, 4);
+    public void drawCircle(MousePoint p) {
+        graphics.fillOval(p.ox - 2, p.oy - 2, 4, 4);
+    }
+
+    public void highlightCirlcle(MousePoint p, Color c) {
+        graphics.setFill(c);
+        graphics.fillOval(p.ox - 4, p.oy - 4, 8, 8);
     }
 
     public void drawPoint(boolean a, double x, double y) {
@@ -203,7 +208,7 @@ public class Renderer {
         }
 
         // Draw points
-        drawCircle(next.ox, next.oy);
+        drawCircle(next);
         path.index++;
     }
 }

@@ -1,5 +1,6 @@
 package manager.mouse;
 
+import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import manager.gui.Controller;
 
@@ -38,39 +39,33 @@ public class PathFinder {
         return this.start.get() != null && this.end.get() != null;
     }
 
-    LinkedList<MousePath> sort(HashMap<MousePath, Pair<Integer, Integer>> potentials) {
-        List<MousePath> keys = new ArrayList<>(potentials.keySet());
-        LinkedList<MousePath> sorted = new LinkedList<>();
+    public void execute() {
+        controller.toggleCanvas(true);
 
-        final int total = potentials.size();
-        for (int index = 0; index < total; index++) {
-            MousePath mp = keys.get(index);
-
-            if (sorted.isEmpty()) sorted.addFirst(mp);
-            else {
-                Pair<Integer, Integer> spans = potentials.get(mp);
-                int targetIndex = -1, totalSorted = sorted.size();
-
-                // Iterate sorted to compare differences
-                for (int i = 0; i < totalSorted; i++) {
-                    MousePath sp = sorted.get(i);
-                    Pair<Integer, Integer> sspans = potentials.get(sp);
-
-                    if (spans.getKey() < sspans.getKey() && spans.getValue() < sspans.getValue()) {
-
-                        targetIndex = i;
-                        break;
-                    }
-                }
-
-                sorted.add(targetIndex != -1 ? targetIndex : totalSorted, mp);
-            }
+        // Get human path that resembles our needed x/y span
+        if (path == null && (path = this.get()) == null) {
+            controller.renderer.drawText("NO SUITABLE PATHS FOUND");
+            controller.toggleCanvas(false);
+            return;
         }
-        return sorted;
+
+        // Cache index of reference path (for drawing path info)
+        controller.paths.index = controller.paths.list.indexOf(path);
+
+        // Translate reference path from start point
+        path.translate(start.get());
+
+        // Verify/adjust path to ensure it touches end point
+        path.verify(end.get());
+
+        // Draw path
+        draw();
     }
 
-    @Nullable // Find path from start -> end
-    public MousePath get() {
+    //TODO - prevent reuse
+    @Nullable
+    // Find path from start -> end
+    MousePath get() {
         long startTime = Instant.now().toEpochMilli();
 
         // Get set points
@@ -99,7 +94,7 @@ public class PathFinder {
         }
 
         // Sort
-        LinkedList<MousePath> sorted = sort(potentials);
+        LinkedList<MousePath> sorted = Paths.sort(potentials);
         int total = sorted.size();
 
         // Log time
@@ -108,33 +103,23 @@ public class PathFinder {
 
         // Return random
         return total == 0 ? null : total == 1 ? sorted.get(0) :
-                sorted.get(ran.nextInt((total > 5 ? 5 : total) - 1));
+                sorted.get(ran.nextInt((Math.min(total, 5)) - 1));
     }
 
-    public boolean execute() {
-        controller.toggleCanvas(true);
 
-        // Get human path that resembles our needed x/y span
-        if (path == null && (path = this.get()) == null) {
-            controller.renderer.drawText("NO SUITABLE PATHS FOUND");
-            controller.toggleCanvas(false);
-            return false;
-        }
-
-        // Cache index of reference path (for drawing path info)
-        controller.paths.index = controller.paths.list.indexOf(path);
-
-        // Translate reference path from start point
-        path.translate(start.get());
-
-        // Verify/adjust path to ensure it touches end point
-        path.verify(end.get());
-
+    void draw() {
         new Thread(() -> {
             while (!Thread.interrupted()) {
                 // Draw path
                 MousePoint next;
                 if ((next = path.getNext()) == null) {
+
+                    // Draw highlights..
+                    if (path.poi != null)
+                        controller.renderer.highlightCirlcle(path.poi, Color.BLUE);
+
+
+                    // Done
                     controller.toggleCanvas(false);
                     drawnInfo = false;
                     path = null;
@@ -159,10 +144,9 @@ public class PathFinder {
                 }
 
                 // Draw points
-                controller.renderer.drawCircle(next.ox, next.oy);
+                controller.renderer.drawCircle(next);
                 path.index++;
             }
         }).start();
-        return true;
     }
 }
