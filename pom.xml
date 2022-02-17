@@ -7,7 +7,7 @@
     <!-- Project Details !-->
     <artifactId>HumanMouse</artifactId>
     <groupId>me.ericballard</groupId>
-    <version>0.9</version>
+    <version>0.9.1</version>
 
     <!-- Dependencies !-->
     <dependencies>

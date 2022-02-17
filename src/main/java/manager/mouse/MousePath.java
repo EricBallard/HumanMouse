@@ -8,6 +8,8 @@ import java.util.*;
 public class MousePath {
 
     // Transient modifier excludes from gson
+    public transient LinkedHashMap<Integer, MousePoint> region;
+
     public transient MousePoint poi;
 
     public transient int index;
@@ -60,7 +62,7 @@ public class MousePath {
         this.totalTime = translated.totalTime;
     }
 
-    public void verify(MousePoint end) {
+    void verify(MousePoint end) {
         // Check if path touches end point
         boolean touches = false;
 
@@ -98,20 +100,80 @@ public class MousePath {
         // Highlight poi
         this.poi = poi;
 
-        // Find injection point in path, prior to poi
-        Pair<Integer, Integer> region = findRegion(pindex, dis);
+        // Calculate total x/y difference from poi to end
+        int xDif = end.ox - poi.ox;
+        int yDif = end.oy - poi.oy;
 
-        // Iterate reverse from poi, even distribute remaining difference
-        System.out.println("REGION? : " + region);
+        System.out.println("X-Diff: " + xDif + " | Y-Diff: " + yDif);
 
-    }
+        // Calculate needed region size
+        int regionSize = (xDif < 0 && yDif < 0 ? Math.abs(Math.min(xDif, yDif)) : Math.max(xDif, yDif));
+        if (dis > regionSize) regionSize = dis;
 
-    boolean isLinear(int lastDif, int currDif, int tolerance) {
-        return lastDif < 0 ?
-                // Current & last = moving left
-                (currDif <= lastDif || (lastDif - currDif) <= tolerance) :
-                // Current & last = moving right
-                (currDif >= lastDif || (lastDif - currDif) <= tolerance);
+        // Find section in path, prior to poi
+        Pair<Integer, Integer> regionBounds = findRegion(pindex, regionSize);
+        System.out.println("(" + regionSize + ") REGION: " + regionBounds);
+
+        if (regionBounds == null) return;  //TODO
+        else this.region = new LinkedHashMap<>();
+
+        // Cache points + calculate average x/y difference in region
+        int xAvg = 0, yAvg = 0;
+
+        for (int index = regionBounds.getValue(); index < regionBounds.getKey(); index++) {
+            MousePoint curr = points.get(index);
+            this.region.put(index, curr.copy());
+
+            MousePoint next = this.points.get(index + 1);
+            if (next == null) continue;
+
+            xAvg += Math.abs(next.ox - curr.ox);
+            yAvg += Math.abs(next.oy - curr.oy);
+        }
+
+        xAvg = xAvg / this.region.size();
+        yAvg = yAvg / this.region.size();
+        System.out.println("X-Avg: " + xAvg + " | Y-Avg: " + yAvg);
+
+        // TODO - human random
+        Random ran = new Random();
+
+        int xTally = 0, yTally = 0;
+
+        for (int ri : this.region.keySet()) {
+            int seed = Math.max(Math.max(xAvg, yAvg), 1);
+            int change = 1 + ran.nextInt((seed + 1) - 1);
+
+            if (change != 0) {
+                boolean transX = xDif != 0, transY = yDif != 0, negative;
+                int xChange = 0, yChange = 0;
+
+                if (transX) {
+                    negative = xDif < 0;
+                    xChange = negative ? -1 : 1;
+                    xDif -= xChange;
+
+                    xTally += xChange;
+                }
+
+                if (transY) {
+                    negative = yDif < 0;
+                    yChange = negative ? -1 : 1;
+                    yDif -= yChange;
+
+                    yTally += yChange;
+                }
+
+                System.out.println("X-Diff: " + xDif + " | Y-Diff: " + yDif);
+
+            }
+
+            MousePoint mp = this.region.get(ri);
+            mp.ox = mp.ox + xTally;
+            mp.oy = mp.oy + yTally;
+        }
+
+        System.out.println("Transformed!!");
     }
 
     @Nullable
@@ -130,6 +192,7 @@ public class MousePath {
             // Iterate reverse from poi
             MousePoint next = this.points.get(i);
 
+            // First iteration
             if (last == null) last = next;
             else {
                 // Compare x/y diff to last
@@ -138,31 +201,27 @@ public class MousePath {
 
                 //First compare
                 if (lastXdif == -1) {
+                    // System.out.println("Starting Region: " + i);
+                    regionStartIndex = i;
                     lastXdif = xDif;
                     lastYdif = yDif;
                     continue;
                 }
 
-                if (isLinear(lastXdif, xDif, 4) && isLinear(lastYdif, yDif, 4)) {
-                    foundBlocks++;
-
-                    if (foundBlocks * 5 >= dis) {
-                        // Found region
-                        System.out.println("FOUND REGION: " + regionStartIndex);
-                        return new Pair<>(regionStartIndex, i);
-                    }
+                if (MousePoint.isLinear(lastXdif, xDif, 1)
+                        && MousePoint.isLinear(lastYdif, yDif, 1)) {
 
                     // Found block
-                    System.out.println(i + " | Found block: " + foundBlocks);
+                    foundBlocks++;
+                    //System.out.println(i + " | Found block: " + foundBlocks);
+
                     lastXdif = xDif;
                     lastYdif = yDif;
-                } else {
-                    // Current and last are opposite directions
-                    System.out.println(regionStartIndex + " | Reset region.. X doesnt match, Found: " + foundBlocks);
-                    System.out.println("LAST: " + lastXdif + ", " + lastYdif);
-                    System.out.println("CURR: " + xDif + ", " + yDif);
 
-                    regionStartIndex = i - 1;
+                    // Found region
+                    if (foundBlocks * 5 >= dis * 2) return new Pair<>(regionStartIndex, i);
+                } else {
+                    // Current and last are opposite directions - reset
                     foundBlocks = 0;
                     lastXdif = -1;
                 }

@@ -116,8 +116,23 @@ public class PathFinder {
 
                     // Draw highlights..
                     if (path.poi != null)
-                        controller.renderer.highlightCirlcle(path.poi, Color.BLUE);
+                        controller.renderer.highlightPoint(path.poi, Color.DEEPPINK);
 
+                    // Re-draw transformed region
+                    if (path.region != null) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                        }
+
+                        path.region.forEach((i, p) -> {
+                            controller.renderer.drawPoint(p, Color.YELLOW);
+                            try {
+                                Thread.sleep(p.delay);
+                            } catch (InterruptedException ignored) {
+                            }
+                        });
+                    }
 
                     // Done
                     controller.toggleCanvas(false);
@@ -144,7 +159,24 @@ public class PathFinder {
                 }
 
                 // Draw points
-                controller.renderer.drawCircle(next);
+                int index = path.points.indexOf(next);
+
+//                if (path.region != null) {
+//                    // Color c = index > path.regionBounds.getKey() ? Color.GREEN;
+//                    if (path.region.containsKey(index))
+//                        controller.renderer.drawPoint(next, Color.BLUE);
+//                    // else
+//                    //    controller.renderer.drawPoint(next,
+//                    //            index >  ? Color.GREEN : Color.YELLOW);
+//                } else {
+//                    controller.renderer.drawPoint(next, Color.YELLOW);
+//                }
+
+                if (path.region != null && path.region.containsKey(index))
+                    controller.renderer.drawPoint(next, Color.BLUE);
+                else
+                    controller.renderer.drawPoint(next, Color.YELLOW);
+
                 path.index++;
             }
         }).start();
