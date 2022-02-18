@@ -132,6 +132,15 @@ public class PathFinder {
                             } catch (InterruptedException ignored) {
                             }
                         });
+
+                        // Re-draw translated subregion
+                        path.subRegion.forEach((i, p) -> {
+                            controller.renderer.drawPoint(p, Color.YELLOW);
+                            try {
+                                Thread.sleep(p.delay);
+                            } catch (InterruptedException ignored) {
+                            }
+                        });
                     }
 
                     // Done
@@ -161,21 +170,14 @@ public class PathFinder {
                 // Draw points
                 int index = path.points.indexOf(next);
 
-//                if (path.region != null) {
-//                    // Color c = index > path.regionBounds.getKey() ? Color.GREEN;
-//                    if (path.region.containsKey(index))
-//                        controller.renderer.drawPoint(next, Color.BLUE);
-//                    // else
-//                    //    controller.renderer.drawPoint(next,
-//                    //            index >  ? Color.GREEN : Color.YELLOW);
-//                } else {
-//                    controller.renderer.drawPoint(next, Color.YELLOW);
-//                }
+                if (path.region != null) {
+                    Color c = path.region.containsKey(index) ? Color.BLUE :
+                            path.subRegion.containsKey(index) ? Color.GREEN : Color.YELLOW;
 
-                if (path.region != null && path.region.containsKey(index))
-                    controller.renderer.drawPoint(next, Color.BLUE);
-                else
+                    controller.renderer.drawPoint(next, c);
+                } else {
                     controller.renderer.drawPoint(next, Color.YELLOW);
+                }
 
                 path.index++;
             }

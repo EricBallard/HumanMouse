@@ -15,7 +15,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import manager.gui.handlers.Buttons;
 import manager.gui.handlers.Renderer;
-import manager.mouse.MousePath;
 import manager.mouse.PathFinder;
 import manager.mouse.Paths;
 
@@ -30,16 +29,16 @@ public class Controller implements Initializable {
     ToolBar Tool_Bar;
 
     @FXML
-    MenuButton Files_Btn;
+    MenuButton Files_Btn, Demo_Btn;
 
     @FXML
-    MenuItem Merge_Btn, Load_Btn, Save_Btn;
+    MenuItem Merge_Btn, Load_Btn, Save_Btn, Man_Btn, Auto_Btn;
 
     @FXML
     Button Delete_Btn, Previous_Btn, Next_Btn;
 
     @FXML
-    ToggleButton Demo_Btn, Play_Btn, Repeat_Btn;
+    ToggleButton Play_Btn, Repeat_Btn;
 
     @FXML
     Canvas Canvas;
@@ -141,6 +140,9 @@ public class Controller implements Initializable {
             Merge_Btn.setStyle(style);
             Load_Btn.setStyle(style);
             Save_Btn.setStyle(style);
+
+            Auto_Btn.setStyle(style);
+            Man_Btn.setStyle(style);
         });
     }
 
@@ -189,7 +191,6 @@ public class Controller implements Initializable {
             Play_Btn.setSelected(false);
             Play_Btn.setText("RESUME");
         } else {
-            Demo_Btn.setSelected(false);
             toggleCanvas(false);
         }
     }

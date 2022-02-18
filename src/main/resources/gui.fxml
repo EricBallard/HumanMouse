@@ -20,7 +20,7 @@
             <GridPane fx:id="Tool_Grid">
                <columnConstraints>
                   <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="85.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="60.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="85.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="60.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="60.0" />
                   <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="60.0" />
@@ -37,11 +37,6 @@
                      </cursor>
                   </ToggleButton>
                   <ToggleButton fx:id="Repeat_Btn" disable="true" mnemonicParsing="false" prefWidth="60.0" text="REPEAT" GridPane.columnIndex="3">
-                     <cursor>
-                        <Cursor fx:constant="DEFAULT" />
-                     </cursor>
-                  </ToggleButton>
-                  <ToggleButton fx:id="Demo_Btn" disable="true" mnemonicParsing="false" prefWidth="55.0" text="DEMO" GridPane.columnIndex="1">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
@@ -69,6 +64,15 @@
                      </items>
                      <font>
                         <Font name="System Bold" size="12.0" />
+                     </font>
+                  </MenuButton>
+                  <MenuButton fx:id="Demo_Btn" mnemonicParsing="false" prefWidth="65.0" text="DEMO" GridPane.columnIndex="1">
+                     <items>
+                        <MenuItem fx:id="Man_Btn" mnemonicParsing="false" text="MANUAL" />
+                        <MenuItem fx:id="Auto_Btn" disable="true" mnemonicParsing="false" text="AUTO" />
+                     </items>
+                     <font>
+                        <Font name="System Bold" size="11.0" />
                      </font>
                   </MenuButton>
                </children>

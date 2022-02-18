@@ -8,6 +8,8 @@ import java.util.*;
 public class MousePath {
 
     // Transient modifier excludes from gson
+    public transient LinkedHashMap<Integer, MousePoint> subRegion;
+
     public transient LinkedHashMap<Integer, MousePoint> region;
 
     public transient MousePoint poi;
@@ -107,8 +109,12 @@ public class MousePath {
         System.out.println("X-Diff: " + xDif + " | Y-Diff: " + yDif);
 
         // Calculate needed region size
-        int regionSize = (xDif < 0 && yDif < 0 ? Math.abs(Math.min(xDif, yDif)) : Math.max(xDif, yDif));
+        int regionSize = Math.max(Math.abs(xDif), Math.abs(yDif));
         if (dis > regionSize) regionSize = dis;
+
+        // Ensure region is at least 20% of path and x3 the distance
+        regionSize = Math.max(regionSize, totalPoints / 20);
+        regionSize = Math.max(regionSize, dis * 2);
 
         // Find section in path, prior to poi
         Pair<Integer, Integer> regionBounds = findRegion(pindex, regionSize);
@@ -141,8 +147,8 @@ public class MousePath {
         int xTally = 0, yTally = 0;
 
         for (int ri : this.region.keySet()) {
-            int seed = Math.max(Math.max(xAvg, yAvg), 1);
-            int change = 1 + ran.nextInt((seed + 1) - 1);
+            int seed = Math.max(Math.max(xAvg, yAvg), 1) + 1;
+            int change = ran.ints(0, seed).findFirst().getAsInt();
 
             if (change != 0) {
                 boolean transX = xDif != 0, transY = yDif != 0, negative;
@@ -165,12 +171,21 @@ public class MousePath {
                 }
 
                 System.out.println("X-Diff: " + xDif + " | Y-Diff: " + yDif);
-
             }
 
             MousePoint mp = this.region.get(ri);
             mp.ox = mp.ox + xTally;
             mp.oy = mp.oy + yTally;
+        }
+
+        // Adjust remaining points in path
+        this.subRegion = new LinkedHashMap<>();
+        for (int i = regionBounds.getKey() + 1; i < totalPoints; i++) {
+            MousePoint mp = this.points.get(i).copy();
+            mp.ox = mp.ox + xTally;
+            mp.oy = mp.oy + yTally;
+
+            this.subRegion.put(i, mp);
         }
 
         System.out.println("Transformed!!");
@@ -208,8 +223,8 @@ public class MousePath {
                     continue;
                 }
 
-                if (MousePoint.isLinear(lastXdif, xDif, 1)
-                        && MousePoint.isLinear(lastYdif, yDif, 1)) {
+                if (MousePoint.isLinear(lastXdif, xDif, 5)
+                        && MousePoint.isLinear(lastYdif, yDif, 5)) {
 
                     // Found block
                     foundBlocks++;
