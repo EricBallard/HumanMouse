@@ -16,12 +16,16 @@ public class Files {
 
     public static final File directory = FileUtils.getUserDirectory();
 
-    public static FileChooser getChooser(String title) {
+    public static FileChooser getChooser(String title, boolean database) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle(title);
 
+        if (database)
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SQLite Database", "*.db"));
+        else
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
+
         chooser.setInitialDirectory(Files.directory);
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
         return chooser;
     }
 

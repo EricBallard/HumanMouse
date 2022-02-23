@@ -7,7 +7,7 @@
     <!-- Project Details !-->
     <artifactId>HumanMouse</artifactId>
     <groupId>me.ericballard</groupId>
-    <version>0.9.2</version>
+    <version>0.9.3</version>
 
     <!-- Dependencies !-->
     <dependencies>
@@ -17,6 +17,13 @@
             <artifactId>maven-shade-plugin</artifactId>
             <version>3.2.4</version>
             <type>maven-plugin</type>
+        </dependency>
+
+        <!-- SQLite JDBC !-->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.36.0.3</version>
         </dependency>
 
         <!-- Gson !-->

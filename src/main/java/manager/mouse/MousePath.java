@@ -33,6 +33,28 @@ public class MousePath {
         this.index = 0;
     }
 
+    public MousePath(int xs, int ys, int tt, int tp, String ps) {
+        this.xSpan = xs;
+        this.ySpan = ys;
+        this.totalTime = tt;
+        this.totalPoints = tp;
+        this.points = new LinkedList<>();
+
+        for (String s : ps.split(";")) {
+            String[] data = s.split(":");
+
+            int ox = Integer.valueOf(data[0]), x = Integer.valueOf(data[1]);
+            int oy = Integer.valueOf(data[2]), y = Integer.valueOf(data[3]);
+            int delay = Integer.valueOf(data[4]);
+
+            MousePoint point = new MousePoint(ox, oy, delay);
+            point.x = x;
+            point.y = y;
+
+            add(point);
+        }
+    }
+
     public MousePoint getNext() {
         if (index >= totalPoints) return null;
         return points.get(index);
@@ -278,5 +300,26 @@ public class MousePath {
         MousePoint first = this.points.getFirst(), last = this.points.getLast();
 
         return new AbstractMap.SimpleEntry<>(last.ox - first.ox, last.oy - first.oy);
+    }
+
+    public String getPointsAsString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < totalPoints; i++) {
+            MousePoint point = points.get(i);
+
+            sb.append(point.ox).append(":");
+            sb.append(point.x).append(":");
+
+            sb.append(point.oy).append(":");
+            sb.append(point.y).append(":");
+
+            sb.append(point.delay);
+
+            if (i < totalPoints - 1)
+                sb.append(";");
+        }
+
+        return sb.toString();
     }
 }

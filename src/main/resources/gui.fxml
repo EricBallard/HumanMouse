@@ -19,57 +19,58 @@
          <items>
             <GridPane fx:id="Tool_Grid">
                <columnConstraints>
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="85.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="85.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="60.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="60.0" />
-                  <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="60.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="75.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="75.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="70.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="70.0" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="50.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="100.0" />
-                  <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="45.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="50.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints maxHeight="100.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <ToggleButton fx:id="Play_Btn" disable="true" minWidth="65.0" mnemonicParsing="false" prefWidth="55.0" text="PLAY" GridPane.columnIndex="2">
+                  <ToggleButton fx:id="Play_Btn" disable="true" minWidth="65.0" mnemonicParsing="false" text="PLAY" GridPane.columnIndex="2">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
                   </ToggleButton>
-                  <ToggleButton fx:id="Repeat_Btn" disable="true" mnemonicParsing="false" prefWidth="60.0" text="REPEAT" GridPane.columnIndex="3">
+                  <ToggleButton fx:id="Repeat_Btn" disable="true" mnemonicParsing="false" text="REPEAT" GridPane.columnIndex="3">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
                   </ToggleButton>
-                  <Button fx:id="Delete_Btn" disable="true" mnemonicParsing="false" prefWidth="90.0" text="DELETE PATH" GridPane.columnIndex="5">
+                  <Button fx:id="Delete_Btn" disable="true" mnemonicParsing="false" text="DELETE PATH" GridPane.columnIndex="5">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
                   </Button>
-                  <Button fx:id="Previous_Btn" disable="true" mnemonicParsing="false" prefWidth="40.0" text="&lt;&lt;" GridPane.columnIndex="4">
+                  <Button fx:id="Previous_Btn" disable="true" mnemonicParsing="false" text="&lt;&lt;" GridPane.columnIndex="4">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
                   </Button>
-                  <Button fx:id="Next_Btn" disable="true" mnemonicParsing="false" prefWidth="40.0" text="&gt;&gt;" GridPane.columnIndex="6">
+                  <Button fx:id="Next_Btn" disable="true" mnemonicParsing="false" text="&gt;&gt;" GridPane.columnIndex="6">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
                   </Button>
-                  <MenuButton fx:id="Files_Btn" mnemonicParsing="false" prefWidth="65.0" text="FILES">
+                  <MenuButton fx:id="Files_Btn" mnemonicParsing="false" text="FILES">
                      <items>
                         <MenuItem fx:id="Merge_Btn" mnemonicParsing="false" text="MERGE" />
                         <MenuItem fx:id="Load_Btn" mnemonicParsing="false" text="LOAD" />
                         <MenuItem fx:id="Save_Btn" disable="true" mnemonicParsing="false" text="SAVE" />
+                        <MenuItem fx:id="Pack_Btn" disable="true" mnemonicParsing="false" text="PACK" />
                      </items>
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </MenuButton>
-                  <MenuButton fx:id="Demo_Btn" mnemonicParsing="false" prefWidth="65.0" text="DEMO" GridPane.columnIndex="1">
+                  <MenuButton fx:id="Demo_Btn" mnemonicParsing="false" text="DEBUG" GridPane.columnIndex="1">
                      <items>
-                        <MenuItem fx:id="Man_Btn" mnemonicParsing="false" text="MANUAL" />
                         <MenuItem fx:id="Auto_Btn" disable="true" mnemonicParsing="false" text="AUTO" />
+                        <MenuItem fx:id="Man_Btn" disable="true" mnemonicParsing="false" text="MAN" />
                      </items>
                      <font>
                         <Font name="System Bold" size="11.0" />

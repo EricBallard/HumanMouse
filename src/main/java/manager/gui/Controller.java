@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
+import manager.files.Database;
 import manager.gui.handlers.Buttons;
 import manager.gui.handlers.Renderer;
 import manager.mouse.PathFinder;
@@ -32,7 +33,7 @@ public class Controller implements Initializable {
     MenuButton Files_Btn, Demo_Btn;
 
     @FXML
-    MenuItem Merge_Btn, Load_Btn, Save_Btn, Man_Btn, Auto_Btn;
+    MenuItem Merge_Btn, Load_Btn, Save_Btn, Pack_Btn, Man_Btn, Auto_Btn;
 
     @FXML
     Button Delete_Btn, Previous_Btn, Next_Btn;
@@ -47,16 +48,22 @@ public class Controller implements Initializable {
 
     public GUI gui;
 
+    public Paths paths;
+
     public Buttons buttons;
 
-    public Paths paths;
+    public boolean manualDebug, automaticDebug;
+
 
     public PathFinder pathFinder;
 
     public Renderer renderer;
 
+    public Database database;
+
     public Controller(GUI gui) {
         this.gui = gui;
+        this.database = new Database();
         this.buttons = new Buttons(this);
         this.pathFinder = new PathFinder(this);
     }
@@ -74,9 +81,11 @@ public class Controller implements Initializable {
 
         Save_Btn.setOnAction(buttons::savePaths);
 
+        Pack_Btn.setOnAction(buttons::packPaths);
+
         Play_Btn.setOnAction(buttons::playPaths);
 
-        Demo_Btn.setOnAction(buttons::demoPaths);
+        Man_Btn.setOnAction(buttons::demoPaths);
 
         Repeat_Btn.setOnAction(e -> renderer.repeat.set(!renderer.repeat.get()));
 
@@ -131,15 +140,18 @@ public class Controller implements Initializable {
             Next_Btn.setFont(font);
             Delete_Btn.setFont(font);
 
-            // ContextMenu
+            // Context Menus
             bwidth = Math.max(45, width / 7.87D - 30);
-
             String style = "-fx-pref-width: " + bwidth + "px;" +
                     "-fx-font-size: " + (font.getSize() - 1) + ";";
 
             Merge_Btn.setStyle(style);
             Load_Btn.setStyle(style);
             Save_Btn.setStyle(style);
+
+            bwidth = Math.max(45, width / 9.3D - 30);
+            style = "-fx-pref-width: " + bwidth + "px;" +
+                    "-fx-font-size: " + (font.getSize() - 1) + ";";
 
             Auto_Btn.setStyle(style);
             Man_Btn.setStyle(style);
@@ -166,7 +178,9 @@ public class Controller implements Initializable {
 
     public void toggleToolbarButtons(boolean disabled, String fileName) {
         Save_Btn.setDisable(disabled);
-        Demo_Btn.setDisable(disabled);
+        Pack_Btn.setDisable(disabled);
+        Auto_Btn.setDisable(disabled);
+        Man_Btn.setDisable(disabled);
         Play_Btn.setDisable(disabled);
         Repeat_Btn.setDisable(disabled);
 

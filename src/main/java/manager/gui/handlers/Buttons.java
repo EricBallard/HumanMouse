@@ -29,24 +29,31 @@ public class Buttons {
     }
 
     public void mergePaths(ActionEvent ignored) {
-        FileChooser files = Files.getChooser("Merge");
+        FileChooser files = Files.getChooser("Merge", false);
         List<File> selected = files.showOpenMultipleDialog(controller.gui.stage);
 
         if (selected != null) Files.merge(selected, controller);
     }
 
     public void loadPaths(ActionEvent ignored) {
-        FileChooser files = Files.getChooser("Load");
+        FileChooser files = Files.getChooser("Load", false);
         File selected = files.showOpenDialog(controller.gui.stage);
 
         if (selected != null) Files.load(selected, controller);
     }
 
     public void savePaths(ActionEvent ignored) {
-        FileChooser files = Files.getChooser("Save");
+        FileChooser files = Files.getChooser("Save", false);
         File selected = files.showSaveDialog(controller.gui.stage);
 
         if (selected != null) Files.save(selected, controller);
+    }
+
+    public void packPaths(ActionEvent e) {
+        FileChooser files = Files.getChooser("Save", true);
+        File selected = files.showSaveDialog(controller.gui.stage);
+
+        if (selected != null) controller.database.pack(selected, controller);
     }
 
     public void playPaths(ActionEvent e) {
@@ -98,9 +105,7 @@ public class Buttons {
     }
 
     public void demoPaths(ActionEvent e) {
-        boolean selected = ((ToggleButton) e.getSource()).isSelected();
-
-        if (selected) {
+        if (!controller.renderer.demo.get()) {
             controller.togglePathButtons(true);
 
             if (controller.renderer.state.get() == Renderer.State.RUNNING) {
@@ -109,7 +114,14 @@ public class Buttons {
             }
 
             // Start
-            showInfo();
+            if (!shownInfo) {
+                shownInfo = true;
+                showInfo("HumanMouse-Manager | DEMO", "For your information",
+                        "Left-Click to set 1st point,\nRight-Click to set 2nd point.\n\n"
+                                + "A path will be built and drawn between these points,clicking either button\n"
+                                + "again will start a new path!");
+            }
+
             controller.renderer.clear();
             controller.setCanvasCursor(Cursor.CROSSHAIR);
             controller.renderer.toggleDemo(true);
@@ -128,18 +140,14 @@ public class Buttons {
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(mainStage.getScene().getStylesheets().get(0));
 
-
         alert.show();
-        shownInfo = true;
     }
 
-    void showInfo() {
-        if (shownInfo) return;
-
+    public void showInfo(String title, String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("HumanMouse-Manager | DEMO");
-        alert.setHeaderText("For your information");
-        alert.setContentText("Left-Click to set 1st point,\nRight-Click to set 2nd point.\n\n" + "A path will be built and drawn between these points,clicking either button\n" + "again will start a new path!");
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
 
         alert.initOwner(controller.gui.stage);
         showAlert(alert);
