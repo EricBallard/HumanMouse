@@ -83,7 +83,16 @@ public class Renderer {
             this.thread.interrupt();
     }
 
-    public void toggleDemo(boolean enabled) {
+    public void toggleAutoDebug(boolean enabled) {
+        demo.set(enabled);
+
+        if (!enabled) {
+            graphics.setFill(Color.YELLOW);
+            controller.paths.index = 0;
+        }
+    }
+
+    public void toggleManualDebug(boolean enabled) {
         demo.set(enabled);
 
         if (!enabled) {

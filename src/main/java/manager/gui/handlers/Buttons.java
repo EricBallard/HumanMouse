@@ -20,7 +20,7 @@ import java.util.List;
 
 public class Buttons {
 
-    boolean shownInfo;
+    boolean shownManualInfo;
 
     Controller controller;
 
@@ -65,7 +65,10 @@ public class Buttons {
             // Re/Start/Resume
             controller.togglePathButtons(true);
             controller.disableToggleButton(false);
-            controller.renderer.toggleDemo(false);
+
+            // Stop debug
+            controller.renderer.toggleManualDebug(false);
+            controller.renderer.toggleAutoDebug(false);
 
             if (controller.renderer.state.get() == Renderer.State.FINISHED) controller.rewindPaths();
 
@@ -102,35 +105,6 @@ public class Buttons {
         // Reset renderer draw path in index
         controller.renderer.reset();
         controller.renderer.drawPathInfo(controller.paths.list.get(index));
-    }
-
-    public void demoPaths(ActionEvent e) {
-        if (!controller.renderer.demo.get()) {
-            controller.togglePathButtons(true);
-
-            if (controller.renderer.state.get() == Renderer.State.RUNNING) {
-                controller.disableToggleButton(true);
-                controller.renderer.pause();
-            }
-
-            // Start
-            if (!shownInfo) {
-                shownInfo = true;
-                showInfo("HumanMouse-Manager | DEMO", "For your information",
-                        "Left-Click to set 1st point,\nRight-Click to set 2nd point.\n\n"
-                                + "A path will be built and drawn between these points,clicking either button\n"
-                                + "again will start a new path!");
-            }
-
-            controller.renderer.clear();
-            controller.setCanvasCursor(Cursor.CROSSHAIR);
-            controller.renderer.toggleDemo(true);
-        } else {
-            // Stop
-            controller.renderer.clear();
-            controller.setCanvasCursor(Cursor.DEFAULT);
-            controller.renderer.toggleDemo(false);
-        }
     }
 
     void showAlert(Alert alert) {
@@ -184,5 +158,53 @@ public class Buttons {
             if (controller.pathFinder.pointsSet())
                 controller.pathFinder.execute();
         };
+    }
+
+    public void manualDebug(ActionEvent ignored) {
+        if (!controller.renderer.demo.get()) {
+            controller.togglePathButtons(true);
+
+            if (controller.renderer.state.get() == Renderer.State.RUNNING) {
+                controller.disableToggleButton(true);
+                controller.renderer.pause();
+            }
+
+            // Start
+            if (!shownManualInfo) {
+                shownManualInfo = true;
+                showInfo("HumanMouse-Manager | DEBUG", "For your information",
+                        "Left-Click to set 1st point,\nRight-Click to set 2nd point.\n\n"
+                                + "A path will be built and drawn between these points,clicking either button\n"
+                                + "again will start a new path!");
+            }
+
+            controller.renderer.clear();
+            controller.setCanvasCursor(Cursor.CROSSHAIR);
+            controller.renderer.toggleManualDebug(true);
+        } else {
+            // Stop
+            controller.renderer.clear();
+            controller.setCanvasCursor(Cursor.DEFAULT);
+            controller.renderer.toggleManualDebug(false);
+        }
+    }
+    public void autoDebug(ActionEvent e) {
+        if (!controller.renderer.demo.get()) {
+            controller.togglePathButtons(true);
+
+            if (controller.renderer.state.get() == Renderer.State.RUNNING) {
+                controller.disableToggleButton(true);
+                controller.renderer.pause();
+            }
+
+            //TODO
+
+            controller.renderer.clear();
+            controller.renderer.toggleAutoDebug(true);
+        } else {
+            // Stop
+            controller.renderer.clear();
+            controller.renderer.toggleAutoDebug(false);
+        }
     }
 }

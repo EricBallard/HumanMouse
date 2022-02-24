@@ -24,25 +24,25 @@ public class Controller implements Initializable {
     /* ~~~~~~~~~~~~ FXML References ~~~~~~~~~~~~ */
 
     @FXML
-    GridPane Tool_Grid;
+    Canvas Canvas;
 
     @FXML
     ToolBar Tool_Bar;
 
     @FXML
+    GridPane Tool_Grid;
+
+    @FXML
     MenuButton Files_Btn, Demo_Btn;
-
-    @FXML
-    MenuItem Merge_Btn, Load_Btn, Save_Btn, Pack_Btn, Man_Btn, Auto_Btn;
-
-    @FXML
-    Button Delete_Btn, Previous_Btn, Next_Btn;
 
     @FXML
     ToggleButton Play_Btn, Repeat_Btn;
 
     @FXML
-    Canvas Canvas;
+    Button Delete_Btn, Previous_Btn, Next_Btn;
+
+    @FXML
+    MenuItem Merge_Btn, Load_Btn, Save_Btn, Pack_Btn, Man_Btn, Auto_Btn;
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -85,7 +85,9 @@ public class Controller implements Initializable {
 
         Play_Btn.setOnAction(buttons::playPaths);
 
-        Man_Btn.setOnAction(buttons::demoPaths);
+        Auto_Btn.setOnAction(buttons::autoDebug);
+
+        Man_Btn.setOnAction(buttons::manualDebug);
 
         Repeat_Btn.setOnAction(e -> renderer.repeat.set(!renderer.repeat.get()));
 
@@ -218,5 +220,9 @@ public class Controller implements Initializable {
         this.gui.scene.setCursor(state ? Cursor.WAIT : Cursor.DEFAULT);
         Tool_Bar.setDisable(state);
         toggleCanvas(state);
+    }
+
+    public void getDebugSettings() {
+
     }
 }
