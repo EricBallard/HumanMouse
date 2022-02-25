@@ -1,5 +1,6 @@
 package manager.gui.handlers;
 
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -22,7 +23,7 @@ public class Renderer {
 
     public AtomicBoolean repeat;
 
-    public AtomicBoolean demo;
+    public AtomicBoolean manualDebug, autoDebug;
 
     boolean drawnInfo;
 
@@ -38,8 +39,10 @@ public class Renderer {
 
     public Renderer(Controller controller, Canvas canvas) {
         this.state = new AtomicReference<>(State.STOPPED);
+
         this.repeat = new AtomicBoolean(false);
-        this.demo = new AtomicBoolean(false);
+        this.autoDebug = new AtomicBoolean(false);
+        this.manualDebug = new AtomicBoolean(false);
 
         this.controller = controller;
         this.canvas = canvas;
@@ -83,22 +86,30 @@ public class Renderer {
             this.thread.interrupt();
     }
 
-    public void toggleAutoDebug(boolean enabled) {
-        demo.set(enabled);
+    public void toggleManualDebug(boolean enabled) {
+        manualDebug.set(enabled);
 
         if (!enabled) {
             graphics.setFill(Color.YELLOW);
             controller.paths.index = 0;
         }
+
+        controller.renderer.clear();
+        controller.setCanvasCursor(enabled ? Cursor.CROSSHAIR : Cursor.DEFAULT);
     }
 
-    public void toggleManualDebug(boolean enabled) {
-        demo.set(enabled);
+    public void toggleAutoDebug(boolean enabled) {
+        autoDebug.set(enabled);
+        controller.renderer.clear();
 
         if (!enabled) {
             graphics.setFill(Color.YELLOW);
             controller.paths.index = 0;
         }
+
+        // Get setting for test
+        Input i = Input.getDebugSettings(controller);
+        System.out.println(i == null ? i : "Input: " + i.time + ", " + i.min + ", " + i.max);
     }
 
     public void drawText(String text) {
@@ -108,8 +119,8 @@ public class Renderer {
 
     public void drawTotalPaths(String fileName) {
         clear();
-
         graphics.setFont(new Font("Arial", 12));
+
         graphics.fillText(fileName, 10, 40);
         graphics.fillText("Total Paths: " + controller.paths.totalPaths, 10, 60);
     }

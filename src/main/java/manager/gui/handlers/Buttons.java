@@ -2,7 +2,6 @@ package manager.gui.handlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.ToggleButton;
@@ -107,29 +106,20 @@ public class Buttons {
         controller.renderer.drawPathInfo(controller.paths.list.get(index));
     }
 
-    void showAlert(Alert alert) {
-        alert.initStyle(StageStyle.TRANSPARENT);
-        Stage mainStage = controller.gui.stage;
-
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(mainStage.getScene().getStylesheets().get(0));
-
-        alert.show();
-    }
-
     public void showInfo(String title, String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
-
         alert.initOwner(controller.gui.stage);
-        showAlert(alert);
+
+        Input.style(alert, controller);
+        alert.show();
     }
 
     public EventHandler<? super MouseEvent> setDemoPoint() {
         return (EventHandler<MouseEvent>) e -> {
-            if (!controller.renderer.demo.get())
+            if (!controller.renderer.manualDebug.get())
                 return;
 
             boolean pointA = e.getButton() == MouseButton.PRIMARY;
@@ -161,7 +151,7 @@ public class Buttons {
     }
 
     public void manualDebug(ActionEvent ignored) {
-        if (!controller.renderer.demo.get()) {
+        if (!controller.renderer.manualDebug.get()) {
             controller.togglePathButtons(true);
 
             if (controller.renderer.state.get() == Renderer.State.RUNNING) {
@@ -178,18 +168,15 @@ public class Buttons {
                                 + "again will start a new path!");
             }
 
-            controller.renderer.clear();
-            controller.setCanvasCursor(Cursor.CROSSHAIR);
             controller.renderer.toggleManualDebug(true);
         } else {
             // Stop
-            controller.renderer.clear();
-            controller.setCanvasCursor(Cursor.DEFAULT);
             controller.renderer.toggleManualDebug(false);
         }
     }
+
     public void autoDebug(ActionEvent e) {
-        if (!controller.renderer.demo.get()) {
+        if (!controller.renderer.autoDebug.get()) {
             controller.togglePathButtons(true);
 
             if (controller.renderer.state.get() == Renderer.State.RUNNING) {
@@ -197,13 +184,9 @@ public class Buttons {
                 controller.renderer.pause();
             }
 
-            //TODO
-
-            controller.renderer.clear();
             controller.renderer.toggleAutoDebug(true);
         } else {
             // Stop
-            controller.renderer.clear();
             controller.renderer.toggleAutoDebug(false);
         }
     }
