@@ -111,7 +111,6 @@ public class Buttons {
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
-        alert.initOwner(controller.gui.stage);
 
         Input.style(alert, controller);
         alert.show();
