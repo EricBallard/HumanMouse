@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Pair;
 import manager.gui.Controller;
 import manager.mouse.MousePath;
 import manager.mouse.MousePoint;
@@ -102,14 +103,23 @@ public class Renderer {
         autoDebug.set(enabled);
         controller.renderer.clear();
 
-        if (!enabled) {
-            graphics.setFill(Color.YELLOW);
-            controller.paths.index = 0;
+        if (enabled) {
+            Pair<Integer, Pair<Integer, Integer>> settings = controller.getDebugSettings();
+            System.out.println("Total Time: " + settings);
+
+            if (settings != null) {
+                //TODO
+
+                return;
+            } else {
+                // Bad/No input - disable
+                autoDebug.set(false);
+            }
         }
 
-        // Get setting for test
-        Input i = Input.getDebugSettings(controller);
-        System.out.println(i == null ? i : "Input: " + i.time + ", " + i.min + ", " + i.max);
+        graphics.setFill(Color.YELLOW);
+        controller.paths.index = 0;
+
     }
 
     public void drawText(String text) {

@@ -2,14 +2,10 @@ package manager.gui.handlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import manager.files.Files;
 import manager.gui.Controller;
 import manager.mouse.MousePoint;
@@ -18,8 +14,6 @@ import java.io.File;
 import java.util.List;
 
 public class Buttons {
-
-    boolean shownManualInfo;
 
     Controller controller;
 
@@ -48,7 +42,7 @@ public class Buttons {
         if (selected != null) Files.save(selected, controller);
     }
 
-    public void packPaths(ActionEvent e) {
+    public void packPaths(ActionEvent ignored) {
         FileChooser files = Files.getChooser("Save", true);
         File selected = files.showSaveDialog(controller.gui.stage);
 
@@ -106,15 +100,6 @@ public class Buttons {
         controller.renderer.drawPathInfo(controller.paths.list.get(index));
     }
 
-    public void showInfo(String title, String header, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-
-        Input.style(alert, controller);
-        alert.show();
-    }
 
     public EventHandler<? super MouseEvent> setDemoPoint() {
         return (EventHandler<MouseEvent>) e -> {
@@ -159,22 +144,15 @@ public class Buttons {
             }
 
             // Start
-            if (!shownManualInfo) {
-                shownManualInfo = true;
-                showInfo("HumanMouse-Manager | DEBUG", "For your information",
-                        "Left-Click to set 1st point,\nRight-Click to set 2nd point.\n\n"
-                                + "A path will be built and drawn between these points,clicking either button\n"
-                                + "again will start a new path!");
-            }
-
-            controller.renderer.toggleManualDebug(true);
+            controller.manInfoOpen = true;
+            controller.showInfo(false);
         } else {
             // Stop
             controller.renderer.toggleManualDebug(false);
         }
     }
 
-    public void autoDebug(ActionEvent e) {
+    public void autoDebug(ActionEvent ignored) {
         if (!controller.renderer.autoDebug.get()) {
             controller.togglePathButtons(true);
 
@@ -183,10 +161,19 @@ public class Buttons {
                 controller.renderer.pause();
             }
 
-            controller.renderer.toggleAutoDebug(true);
+
+            controller.autoInfoOpen = true;
+            controller.showInfo(true);
         } else {
             // Stop
             controller.renderer.toggleAutoDebug(false);
         }
+    }
+
+    public void startDebug(ActionEvent ignored) {
+        if (controller.manInfoOpen) controller.renderer.toggleManualDebug(true);
+        else controller.renderer.toggleAutoDebug(true);
+
+        controller.hideInfo(null);
     }
 }

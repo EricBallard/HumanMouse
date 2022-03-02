@@ -2,6 +2,7 @@ package manager.gui;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -9,15 +10,21 @@ import javafx.scene.control.*;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.UnaryOperator;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
+import javafx.stage.StageStyle;
+import javafx.util.Pair;
 import manager.files.Database;
 import manager.gui.handlers.Buttons;
 import manager.gui.handlers.Renderer;
 import manager.mouse.PathFinder;
 import manager.mouse.Paths;
+
+import javax.annotation.Nullable;
 
 public class Controller implements Initializable {
 
@@ -30,7 +37,7 @@ public class Controller implements Initializable {
     ToolBar Tool_Bar;
 
     @FXML
-    GridPane Tool_Grid;
+    Label Auto_Info, Man_Info;
 
     @FXML
     MenuButton Files_Btn, Demo_Btn;
@@ -39,10 +46,20 @@ public class Controller implements Initializable {
     ToggleButton Play_Btn, Repeat_Btn;
 
     @FXML
-    Button Delete_Btn, Previous_Btn, Next_Btn;
+    TextField Total_Time, Min_Delay, Max_Delay;
+
+    @FXML
+    GridPane Tool_Grid, Settings_Grid, Info_Grid;
+
+    @FXML
+    RowConstraints Settings_Cell, Controls_Cell, Info_Cell;
 
     @FXML
     MenuItem Merge_Btn, Load_Btn, Save_Btn, Pack_Btn, Man_Btn, Auto_Btn;
+
+    @FXML
+    Button Delete_Btn, Previous_Btn, Next_Btn, Start_Debug, Cancel_Debug;
+
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -52,14 +69,13 @@ public class Controller implements Initializable {
 
     public Buttons buttons;
 
-    public boolean manualDebug, automaticDebug;
-
-
     public PathFinder pathFinder;
 
     public Renderer renderer;
 
     public Database database;
+
+    public boolean manInfoOpen, autoInfoOpen;
 
     public Controller(GUI gui) {
         this.gui = gui;
@@ -89,6 +105,10 @@ public class Controller implements Initializable {
 
         Man_Btn.setOnAction(buttons::manualDebug);
 
+        Start_Debug.setOnAction(buttons::startDebug);
+
+        Cancel_Debug.setOnAction(this::hideInfo);
+
         Repeat_Btn.setOnAction(e -> renderer.repeat.set(!renderer.repeat.get()));
 
         Previous_Btn.setOnAction(e -> buttons.adjustIndex(false, false));
@@ -103,6 +123,17 @@ public class Controller implements Initializable {
         /* Resize */
         gui.stage.widthProperty().addListener(this::resize);
         gui.stage.heightProperty().addListener(e -> Canvas.setHeight(gui.stage.getHeight() - 40));
+
+        /* Settings */
+        UnaryOperator<TextFormatter.Change> textFilter = e -> {
+            String text = e.getText();
+            return text.matches("[0-9]*") ? e : null;
+        };
+
+        // Only allow numeric input (each require unique formatters)
+        Total_Time.setTextFormatter(new TextFormatter<>(textFilter));
+        Min_Delay.setTextFormatter(new TextFormatter<>(textFilter));
+        Max_Delay.setTextFormatter(new TextFormatter<>(textFilter));
     }
 
     void resize(Observable o) {
@@ -222,7 +253,61 @@ public class Controller implements Initializable {
         toggleCanvas(state);
     }
 
-    public void getDebugSettings() {
+    public void hideInfo(ActionEvent ignored) {
+        manInfoOpen = false;
+        autoInfoOpen = false;
+        Info_Grid.setVisible(false);
+    }
 
+    public void showInfo(boolean autoDebug) {
+        configureGrid(autoDebug);
+        Info_Grid.setVisible(true);
+        Start_Debug.requestFocus();
+    }
+
+    void configureGrid(boolean autoDebug) {
+        // Label
+        Man_Info.setVisible(!autoDebug);
+        Auto_Info.setVisible(autoDebug);
+
+        // Resize row constraints (hide/show settings_grid
+        Info_Cell.setPercentHeight(autoDebug ? 45 : 60);
+        Controls_Cell.setPercentHeight(autoDebug ? 20 : 25);
+        Settings_Cell.setPercentHeight(autoDebug ? 30 : 0);
+        Settings_Grid.setVisible(autoDebug);
+
+        // Re-size info grid
+        double w = gui.stage.getWidth(),
+                infoW = w - (w / 3);
+
+        Info_Grid.setMaxHeight(autoDebug ? infoW : infoW - (infoW * .30));
+    }
+
+    public void showError(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+
+        alert.initStyle(StageStyle.TRANSPARENT);
+        alert.initOwner(gui.stage);
+        alert.setResizable(false);
+        alert.show();
+    }
+
+    @Nullable
+    public Pair<Integer, Pair<Integer, Integer>> getDebugSettings() {
+        int total, min, max;
+
+        try {
+            total = Integer.parseInt(Total_Time.getText());
+            min = Integer.parseInt(Min_Delay.getText());
+            max = Integer.parseInt(Max_Delay.getText());
+        } catch (NumberFormatException ignored) {
+            hideInfo(null);
+            return null;
+        }
+
+        return new Pair<>(total, new Pair<>(min, max));
     }
 }

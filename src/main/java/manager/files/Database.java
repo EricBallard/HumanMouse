@@ -31,7 +31,7 @@ public class Database {
             con = DriverManager.getConnection("jdbc:sqlite:" + file.getPath());
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            controller.buttons.showInfo("HumanMouse-Manager | PACK", "Database Error", e.getMessage());
+            controller.showError("HumanMouse-Manager | PACK", "Database Error", e.getMessage());
             return false;
         }
 
@@ -106,7 +106,7 @@ public class Database {
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-            controller.buttons.showInfo("HumanMouse-Manager | PACK", "Database Error", e.getMessage());
+            controller.showError("HumanMouse-Manager | PACK", "Database Error", e.getMessage());
             return false;
         }
         return true;
@@ -117,7 +117,7 @@ public class Database {
             con.prepareStatement(TABLE_SCHEMA).execute();
         } catch (SQLException e) {
             e.printStackTrace();
-            controller.buttons.showInfo("HumanMouse-Manager | PACK", "Database Error", e.getMessage());
+            controller.showError("HumanMouse-Manager | PACK", "Database Error", e.getMessage());
             return false;
         }
         return true;

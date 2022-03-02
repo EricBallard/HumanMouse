@@ -81,7 +81,7 @@
                         </MenuButton>
                         <MenuButton fx:id="Demo_Btn" mnemonicParsing="false" text="DEBUG" GridPane.columnIndex="1">
                            <items>
-                              <MenuItem fx:id="Auto_Btn" mnemonicParsing="false" text="AUTO" />
+                              <MenuItem fx:id="Auto_Btn" disable="true" mnemonicParsing="false" text="AUTO" />
                               <MenuItem fx:id="Man_Btn" disable="true" mnemonicParsing="false" text="MAN" />
                            </items>
                            <font>
@@ -93,17 +93,18 @@
                </items>
             </ToolBar>
             <Canvas fx:id="Canvas" height="472.0" width="512.0" GridPane.rowIndex="1" />
-            <GridPane maxHeight="342.0" maxWidth="342.0" style="-fx-background-color: #505050; -fx-background-radius: 0 0 50 50; -fx-border-color: #757575; -fx-border-width: 10 0 0 0;" GridPane.rowIndex="1">
+            <GridPane fx:id="Info_Grid" maxHeight="342.0" maxWidth="342.0" style="-fx-background-color: #505050; -fx-background-radius: 50;" visible="false" GridPane.rowIndex="1">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                  <RowConstraints percentHeight="50.0" vgrow="SOMETIMES" />
-                <RowConstraints percentHeight="25.0" vgrow="SOMETIMES" />
-                <RowConstraints percentHeight="25.0" vgrow="SOMETIMES" />
+                  <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
+                  <RowConstraints fx:id="Info_Cell" percentHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints fx:id="Settings_Cell" percentHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints fx:id="Controls_Cell" percentHeight="20.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <GridPane style="-fx-border-color: #757575; -fx-border-width: 0 5 0 5; -fx-background-color: #252525;">
+                  <GridPane style="-fx-border-color: #757575; -fx-border-width: 2.5 5 2.5 5; -fx-background-color: #252525;" GridPane.rowIndex="1">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" />
                     </columnConstraints>
@@ -111,17 +112,22 @@
                       <RowConstraints vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Enter the total time for test, and the min/max amount of time between every path. Points for each path are set at random, if a path is not found the test will stop with related information displayed." textAlignment="CENTER" textFill="#757575" wrapText="true">
+                        <Label fx:id="Auto_Info" text="Enter the total time for test, and the min/max amount of time between every path. Points for each path are set at random, if a path is not found the test will stop with related information displayed." textAlignment="CENTER" textFill="#757575" visible="false" wrapText="true">
                            <font>
-                              <Font size="15.0" />
+                              <Font size="14.0" />
                            </font>
                            <GridPane.margin>
                               <Insets left="10.0" right="10.0" />
                            </GridPane.margin>
                         </Label>
+                        <Label fx:id="Man_Info" text="Left-Click to set 1st point, Right-Click to set 2nd point. A path will be built and drawn between these points, clicking either button again will start a new path!" textAlignment="CENTER" textFill="#757575" wrapText="true">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                   </GridPane>
-                  <GridPane style="-fx-border-color: #757575; -fx-border-width: 5 0 2.5 0;" GridPane.rowIndex="1">
+                  <GridPane fx:id="Settings_Grid" style="-fx-border-color: #757575; -fx-border-width: 0 0 2.5 0;" GridPane.rowIndex="2">
                     <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
                         <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
@@ -152,27 +158,32 @@
                         </Label>
                      </children>
                   </GridPane>
-                  <GridPane GridPane.rowIndex="2">
+                  <GridPane GridPane.rowIndex="3">
                     <columnConstraints>
-                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" prefWidth="100.0" />
-                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" prefWidth="100.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="50.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="50.0" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button fx:id="Start_Debug" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="START">
+                        <Button fx:id="Start_Debug" mnemonicParsing="false" prefWidth="80.0" text="OKAY">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Button>
-                        <Button fx:id="Cancel_Debug" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="CANCEL" GridPane.columnIndex="1">
+                        <Button fx:id="Cancel_Debug" mnemonicParsing="false" prefWidth="80.0" text="CANCEL" GridPane.columnIndex="1">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Button>
                      </children>
                   </GridPane>
+                  <Label text="Information" textFill="#252525">
+                     <font>
+                        <Font name="System Bold Italic" size="18.0" />
+                     </font>
+                  </Label>
                </children>
             </GridPane>
          </children>
