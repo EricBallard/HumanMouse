@@ -5,6 +5,7 @@ import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 
@@ -16,6 +17,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.StageStyle;
 import javafx.util.Pair;
 import manager.files.Database;
@@ -37,9 +40,6 @@ public class Controller implements Initializable {
     ToolBar Tool_Bar;
 
     @FXML
-    Label Auto_Info, Man_Info;
-
-    @FXML
     MenuButton Files_Btn, Demo_Btn;
 
     @FXML
@@ -56,6 +56,9 @@ public class Controller implements Initializable {
 
     @FXML
     MenuItem Merge_Btn, Load_Btn, Save_Btn, Pack_Btn, Man_Btn, Auto_Btn;
+
+    @FXML
+    Label Auto_Info, Man_Info, Info_Title, Time_Info, Min_Info, Max_Info;
 
     @FXML
     Button Delete_Btn, Previous_Btn, Next_Btn, Start_Debug, Cancel_Debug;
@@ -122,7 +125,11 @@ public class Controller implements Initializable {
 
         /* Resize */
         gui.stage.widthProperty().addListener(this::resize);
-        gui.stage.heightProperty().addListener(e -> Canvas.setHeight(gui.stage.getHeight() - 40));
+
+        gui.stage.heightProperty().addListener(e -> {
+            Canvas.setHeight(gui.stage.getHeight() - 40);
+            Info_Grid.setMaxHeight(Canvas.getHeight() * .7);
+        });
 
         /* Settings */
         UnaryOperator<TextFormatter.Change> textFilter = e -> {
@@ -147,6 +154,10 @@ public class Controller implements Initializable {
             Tool_Bar.setMinWidth(width - 15);
             Tool_Grid.setMinWidth(width - 25);
 
+            // Info - Alert/Input
+            Info_Grid.setMaxWidth(width * .7);
+
+
             // Buttons
             double bwidth = width / 12.8D;
             Previous_Btn.setMinWidth(bwidth);
@@ -157,13 +168,38 @@ public class Controller implements Initializable {
             Play_Btn.setMinWidth(bwidth);
 
             Files_Btn.setMinWidth(width / 7.87D);
-            Delete_Btn.setMinWidth(width / 5.68D);
             Repeat_Btn.setMinWidth(width / 8.53D);
 
-            // Fonts
-            int size = (int) (width / 100);
-            Font font = new Font(Files_Btn.getFont().getFamily(), size < 12 ? 12 : Math.min(size, 16));
+            bwidth = width / 5.68D;
+            Delete_Btn.setMinWidth(bwidth);
+            Start_Debug.setMinWidth(bwidth);
+            Cancel_Debug.setMinWidth(bwidth);
 
+            Total_Time.setMinWidth(bwidth);
+            Min_Delay.setMinWidth(bwidth);
+            Max_Delay.setMinWidth(bwidth);
+
+            // Labels
+            int size = (int) (width / 50);
+            Font font = new Font(Files_Btn.getFont().getFamily(), size < 14 ? 14 : Math.min(size, 24));
+
+            Auto_Info.setFont(font);
+            Man_Info.setFont(font);
+
+            Time_Info.setFont(font);
+            Min_Info.setFont(font);
+            Max_Info.setFont(font);
+
+            font = Font.font(font.getFamily(),
+                    FontWeight.BOLD, FontPosture.ITALIC,
+                    Math.max(18, Math.min(size, 28)));
+
+            Info_Title.setFont(font);
+
+            size = (int) (width / 100);
+            font = new Font(Files_Btn.getFont().getFamily(), size < 12 ? 12 : Math.min(size, 16));
+
+            // Fonts
             Files_Btn.setFont(font);
             Demo_Btn.setFont(font);
             Play_Btn.setFont(font);
@@ -172,6 +208,13 @@ public class Controller implements Initializable {
 
             Next_Btn.setFont(font);
             Delete_Btn.setFont(font);
+
+            Start_Debug.setFont(font);
+            Cancel_Debug.setFont(font);
+
+            Total_Time.setFont(font);
+            Min_Delay.setFont(font);
+            Max_Delay.setFont(font);
 
             // Context Menus
             bwidth = Math.max(45, width / 7.87D - 30);
@@ -237,20 +280,12 @@ public class Controller implements Initializable {
         if (demo) {
             Play_Btn.setSelected(false);
             Play_Btn.setText("RESUME");
-        } else {
-            toggleCanvas(false);
         }
-    }
-
-    public void toggleCanvas(boolean disabled) {
-        //TODO -ensure canvas gets renabled
-        //Canvas.setDisable(disabled);
     }
 
     public void disabled(boolean state) {
         this.gui.scene.setCursor(state ? Cursor.WAIT : Cursor.DEFAULT);
         Tool_Bar.setDisable(state);
-        toggleCanvas(state);
     }
 
     public void hideInfo(ActionEvent ignored) {
@@ -275,12 +310,6 @@ public class Controller implements Initializable {
         Controls_Cell.setPercentHeight(autoDebug ? 20 : 25);
         Settings_Cell.setPercentHeight(autoDebug ? 30 : 0);
         Settings_Grid.setVisible(autoDebug);
-
-        // Re-size info grid
-        double w = gui.stage.getWidth(),
-                infoW = w - (w / 3);
-
-        Info_Grid.setMaxHeight(autoDebug ? infoW : infoW - (infoW * .30));
     }
 
     public void showError(String title, String header, String content) {
@@ -309,5 +338,9 @@ public class Controller implements Initializable {
         }
 
         return new Pair<>(total, new Pair<>(min, max));
+    }
+
+    public Bounds getSize() {
+        return Canvas.getBoundsInLocal();
     }
 }

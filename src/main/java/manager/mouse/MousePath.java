@@ -192,7 +192,7 @@ public class MousePath {
                     yTally += yChange;
                 }
 
-                System.out.println("X-Diff: " + xDif + " | Y-Diff: " + yDif);
+              //  System.out.println("X-Diff: " + xDif + " | Y-Diff: " + yDif);
             }
 
             MousePoint mp = this.region.get(ri);

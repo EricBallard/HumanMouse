@@ -1,5 +1,6 @@
 package manager.gui.handlers;
 
+import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -10,6 +11,8 @@ import manager.gui.Controller;
 import manager.mouse.MousePath;
 import manager.mouse.MousePoint;
 
+import java.time.Instant;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -99,51 +102,120 @@ public class Renderer {
         controller.setCanvasCursor(enabled ? Cursor.CROSSHAIR : Cursor.DEFAULT);
     }
 
+    MousePoint getRandom(Bounds bounds) {
+        // Generate random point
+        ThreadLocalRandom ran = ThreadLocalRandom.current();
+
+        int ranX = (int) ran.nextDouble(bounds.getMinX(), bounds.getMaxX()),
+                ranY = (int) ran.nextDouble(bounds.getMinY(), bounds.getMaxY());
+
+        return new MousePoint(ranX, ranY);
+    }
+
+    //TODO - prevent path re-use
     public void toggleAutoDebug(boolean enabled) {
         autoDebug.set(enabled);
         controller.renderer.clear();
 
         if (enabled) {
             Pair<Integer, Pair<Integer, Integer>> settings = controller.getDebugSettings();
-            System.out.println("Total Time: " + settings);
 
-            if (settings != null) {
-                //TODO
+            if (settings != null && settings.getKey() > 0) {
+                // START - Auto
+                Pair<Integer, Integer> interval = settings.getValue();
 
+                // Auto-Debug Thread
+                new Thread(() -> {
+                    final long start = Instant.now().toEpochMilli();
+                    final Bounds bounds = controller.getSize();
+
+                    final int runTime = settings.getKey(), minDelay = interval.getKey(), maxDelay = interval.getValue();
+                    int foundPaths = 0;
+
+                    System.out.println("DEBUG |  " + settings.getKey() + ", " + "[" + minDelay + ", " + maxDelay + "]");
+
+                    while (!Thread.interrupted()
+                            && controller.gui.stage.isShowing()) {
+
+                        // Success - Log info
+                        int runMinutes = (int) (((Instant.now().toEpochMilli() - start) / 1000) / 60);
+                        String msg = "Used " + foundPaths + " paths\nTesting for " + runMinutes + " minutes";
+
+                        if (runMinutes >= runTime) {
+                            System.out.println("DEBUG | COMPLETED!!!");
+                            break;
+                        }
+
+                        System.out.println(msg);
+                        drawText(msg, 30);
+
+                        // Generate 2 random points
+                        MousePoint spoint = getRandom(bounds), epoint = getRandom(bounds);
+
+                        // Paint them on canvas
+                        highlightPoint(spoint, Color.YELLOW);
+                        highlightPoint(epoint, Color.DEEPPINK);
+
+                        // Generate path between points
+                        controller.pathFinder.setPoint(true, spoint);
+                        controller.pathFinder.setPoint(false, epoint);
+
+                        if (!controller.pathFinder.execute(true)) {
+                            // Failed to find path - stop debugging
+                            System.out.println("DEBUG | Failed to find path between points!");
+                            break;
+                        } else
+                            foundPaths++;
+
+                        // Random delay interval
+                        try {
+                            Thread.sleep((long)
+                                    ThreadLocalRandom.current().nextDouble(minDelay, maxDelay));
+                        } catch (InterruptedException ignored) {
+                            System.out.println("DEBUG | Failed to delay between paths, stopping...");
+                            break;
+                        }
+
+                        clear();
+                    }
+
+                    // Stop
+                    System.out.println("DEBUG | STOPPED!!!");
+                }).start();
                 return;
             } else {
                 // Bad/No input - disable
+                drawText("PLEASE ENTER SETTINGS", 20);
                 autoDebug.set(false);
             }
         }
 
         graphics.setFill(Color.YELLOW);
         controller.paths.index = 0;
-
     }
 
-    public void drawText(String text) {
-        graphics.setFill(Color.YELLOW);
-        graphics.fillText(text, 10, 40);
+    public void drawText(String text, int y) {
+        graphics.setFill(Color.DEEPPINK);
+        graphics.fillText(text, 10, y);
     }
 
     public void drawTotalPaths(String fileName) {
         clear();
         graphics.setFont(new Font("Arial", 12));
 
-        graphics.fillText(fileName, 10, 40);
-        graphics.fillText("Total Paths: " + controller.paths.totalPaths, 10, 60);
+        graphics.fillText(fileName, 10, 60);
+        graphics.fillText("Total Paths: " + controller.paths.totalPaths, 10, 80);
     }
 
     public void drawPathInfo(MousePath path) {
         graphics.setFill(Color.YELLOW);
-        graphics.fillText("#: " + (controller.paths.index + 1) + "/" + controller.paths.totalPaths, 10, 40);
+        graphics.fillText("#: " + (controller.paths.index + 1) + "/" + controller.paths.totalPaths, 10, 100);
 
-        graphics.fillText("Time: " + path.totalTime, 10, 60);
-        graphics.fillText("Points: " + path.totalPoints, 10, 80);
+        graphics.fillText("Time: " + path.totalTime, 10, 120);
+        graphics.fillText("Points: " + path.totalPoints, 10, 140);
 
-        graphics.fillText("X-Span: " + path.xSpan, 10, 100);
-        graphics.fillText("Y-Span: " + path.ySpan, 10, 120);
+        graphics.fillText("X-Span: " + path.xSpan, 10, 160);
+        graphics.fillText("Y-Span: " + path.ySpan, 10, 180);
     }
 
     public void highlightPoint(MousePoint p, Color c) {

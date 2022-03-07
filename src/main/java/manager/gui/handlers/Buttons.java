@@ -130,7 +130,7 @@ public class Buttons {
 
             // Find path
             if (controller.pathFinder.pointsSet())
-                controller.pathFinder.execute();
+                controller.pathFinder.execute(false);
         };
     }
 

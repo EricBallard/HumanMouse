@@ -141,17 +141,17 @@
                         <TextField fx:id="Total_Time" alignment="CENTER" maxWidth="80.0" promptText="Minutes" GridPane.rowIndex="1" />
                         <TextField fx:id="Min_Delay" alignment="CENTER" maxWidth="80.0" promptText="Miliseconds" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="Max_Delay" alignment="CENTER" maxWidth="80.0" promptText="Miliseconds" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label text="Total Time" textFill="#252525">
+                        <Label fx:id="Time_Info" text="Total Time" textFill="#252525">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Min Delay" textFill="#252525" GridPane.columnIndex="1">
+                        <Label fx:id="Min_Info" text="Min Delay" textFill="#252525" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Max Delay" textFill="#252525" GridPane.columnIndex="2">
+                        <Label fx:id="Max_Info" text="Max Delay" textFill="#252525" GridPane.columnIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -179,7 +179,7 @@
                         </Button>
                      </children>
                   </GridPane>
-                  <Label text="Information" textFill="#252525">
+                  <Label fx:id="Info_Title" text="Information" textFill="#252525">
                      <font>
                         <Font name="System Bold Italic" size="18.0" />
                      </font>

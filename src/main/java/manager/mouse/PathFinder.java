@@ -39,14 +39,16 @@ public class PathFinder {
         return this.start.get() != null && this.end.get() != null;
     }
 
-    public void execute() {
-        controller.toggleCanvas(true);
+    public void setPoint(boolean start, MousePoint point) {
+        (start ? this.start : this.end).set(point);
+    }
+
+    public boolean execute(boolean wait) {
 
         // Get human path that resembles our needed x/y span
         if (path == null && (path = this.get()) == null) {
-            controller.renderer.drawText("NO SUITABLE PATHS FOUND");
-            controller.toggleCanvas(false);
-            return;
+            controller.renderer.drawText("NO SUITABLE PATHS FOUND", 20);
+            return false;
         }
 
         // Cache index of reference path (for drawing path info)
@@ -59,7 +61,8 @@ public class PathFinder {
         path.verify(end.get());
 
         // Draw path
-        draw();
+        draw(wait);
+        return true;
     }
 
     //TODO - prevent reuse
@@ -107,8 +110,8 @@ public class PathFinder {
     }
 
 
-    void draw() {
-        new Thread(() -> {
+    void draw(boolean wait) {
+        Runnable draw = () -> {
             while (!Thread.interrupted()) {
                 // Draw path
                 MousePoint next;
@@ -144,7 +147,6 @@ public class PathFinder {
                     }
 
                     // Done
-                    controller.toggleCanvas(false);
                     drawnInfo = false;
                     path = null;
                     break;
@@ -181,6 +183,11 @@ public class PathFinder {
 
                 path.index++;
             }
-        }).start();
+        };
+
+        if (wait)
+            draw.run();
+        else
+            new Thread(draw).start();
     }
 }
