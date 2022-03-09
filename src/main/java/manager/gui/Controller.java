@@ -341,6 +341,6 @@ public class Controller implements Initializable {
     }
 
     public Bounds getSize() {
-        return Canvas.getBoundsInLocal();
+        return Canvas.getBoundsInParent();
     }
 }

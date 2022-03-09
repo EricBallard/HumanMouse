@@ -22,6 +22,17 @@ public class Database {
                     "points TEXT NOT NULL" +
                     ");";
 
+    public boolean initSchema(Controller controller) {
+        try {
+            con.prepareStatement(TABLE_SCHEMA).execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            controller.showError("HumanMouse-Manager | PACK", "Database Error", e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
     public boolean connect(File file, Controller controller) {
         if (con != null)
             return true;
@@ -104,17 +115,6 @@ public class Database {
             statement.setString(5, path.getPointsAsString());
 
             statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            controller.showError("HumanMouse-Manager | PACK", "Database Error", e.getMessage());
-            return false;
-        }
-        return true;
-    }
-
-    public boolean initSchema(Controller controller) {
-        try {
-            con.prepareStatement(TABLE_SCHEMA).execute();
         } catch (SQLException e) {
             e.printStackTrace();
             controller.showError("HumanMouse-Manager | PACK", "Database Error", e.getMessage());

@@ -13,6 +13,8 @@ public class PathFinder {
 
     final static int xSpanThreshold = 50, ySpanThreshold = 50;
 
+    ArrayList<Integer> usedPaths;
+
     // TODO - human random
     Random ran = new Random();
 
@@ -26,6 +28,7 @@ public class PathFinder {
 
     public PathFinder(Controller controller) {
         this.controller = controller;
+        this.usedPaths = new ArrayList<>();
         this.start = new AtomicReference(null);
         this.end = new AtomicReference(null);
     }
@@ -44,15 +47,22 @@ public class PathFinder {
     }
 
     public boolean execute(boolean wait) {
-
         // Get human path that resembles our needed x/y span
         if (path == null && (path = this.get()) == null) {
-            controller.renderer.drawText("NO SUITABLE PATHS FOUND", 20);
+            controller.renderer.drawText("NO SUITABLE PATHS FOUND", 80);
+
+            int xspan = start.get().ox - end.get().ox,
+                    yspan = start.get().oy - end.get().oy;
+
+            controller.renderer.drawText("X-Span: " + xspan + " | Y-Span: " + yspan, 100);
             return false;
         }
 
         // Cache index of reference path (for drawing path info)
         controller.paths.index = controller.paths.list.indexOf(path);
+
+        // Mark path as recently used
+        usedPaths.add(path.hashCode());
 
         // Translate reference path from start point
         path.translate(start.get());
@@ -65,9 +75,8 @@ public class PathFinder {
         return true;
     }
 
-    //TODO - prevent reuse
     @Nullable
-    // Find path from start -> end
+        // Find path from start -> end
     MousePath get() {
         long startTime = Instant.now().toEpochMilli();
 
@@ -80,7 +89,7 @@ public class PathFinder {
         System.out.println("Target= xSpan: " + xSpan + " | ySpan: " + ySpan);
         HashMap<MousePath, Pair<Integer, Integer>> potentials = new HashMap<>();
 
-        // Find 3 potential paths near target x/y span
+        // Find 5 potential paths near target x/y span
         for (MousePath path : controller.paths.list) {
             int xSpanDif = Math.abs(path.xSpan - xSpan);
 
@@ -90,8 +99,13 @@ public class PathFinder {
 
                 // Y-Span meets requirement
                 if (ySpanDif <= ySpanThreshold) {
+                    // Ignore if path has been recently used
+                    if (usedPaths.contains(path.hashCode()))
+                        continue;
+
+                    // Add as potential path
                     potentials.put(path, new Pair<>(xSpanDif, ySpanDif));
-                    // if (potentials.size() == 3) break;
+                    if (potentials.size() == 5) break;
                 }
             }
         }
@@ -108,7 +122,6 @@ public class PathFinder {
         return total == 0 ? null : total == 1 ? sorted.get(0) :
                 sorted.get(ran.nextInt((Math.min(total, 5)) - 1));
     }
-
 
     void draw(boolean wait) {
         Runnable draw = () -> {

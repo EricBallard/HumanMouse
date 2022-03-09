@@ -142,7 +142,7 @@ public class Renderer {
                         String msg = "Used " + foundPaths + " paths\nTesting for " + runMinutes + " minutes";
 
                         if (runMinutes >= runTime) {
-                            System.out.println("DEBUG | COMPLETED!!!");
+                            drawText("Auto-Debug | Completed", 80);
                             break;
                         }
 
@@ -153,19 +153,18 @@ public class Renderer {
                         MousePoint spoint = getRandom(bounds), epoint = getRandom(bounds);
 
                         // Paint them on canvas
-                        highlightPoint(spoint, Color.YELLOW);
-                        highlightPoint(epoint, Color.DEEPPINK);
+                        drawPoint(true, spoint.ox, spoint.oy);
+                        drawPoint(false, epoint.ox, epoint.oy);
 
                         // Generate path between points
                         controller.pathFinder.setPoint(true, spoint);
                         controller.pathFinder.setPoint(false, epoint);
 
-                        if (!controller.pathFinder.execute(true)) {
+                        if (!controller.pathFinder.execute(true))
                             // Failed to find path - stop debugging
-                            System.out.println("DEBUG | Failed to find path between points!");
                             break;
-                        } else
-                            foundPaths++;
+
+                        foundPaths++;
 
                         // Random delay interval
                         try {
