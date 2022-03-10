@@ -19,22 +19,21 @@
     <script src="scripts/anim.js"></script>
     <script src="scripts/recorder.js"></script>
 
-    <!-- Path Start/Target Indicators -->
-    <div id="start" class="start"></div>
-    <div id="target" class="start target"></div>
+    <!-- Target Indicators -->
+    <div id="target" class="start target" onclick="setRandom()"></div>
 
     <!-- Recording Box -->
 
-    <div class="box no-select">
+    <div id="flair" class="flair no-select">
       <p class="text">RECORDING</p>
       <div id="blinker" class="blinker"></div>
     </div>
 
     <!-- Info Box -->
     <div id="info" class="info">
-        <t class="text no-select">Total Paths: <t id="paths">0</t><br/></t>
+      <t class="text no-select">Total Paths: <t id="paths">0</t><br /></t>
 
-        <a id="save" class="link" onclick="save()">SAVE TO DISK</a>
+      <a id="save" class="link" onclick="save()">SAVE TO DISK</a>
     </div>
   </body>
 </html>

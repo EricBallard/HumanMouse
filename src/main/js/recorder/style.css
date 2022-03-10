@@ -28,23 +28,7 @@ body {
   -webkit-touch-callout: none;
   -khtml-user-select: none;
 }
-
-.start {
-  position: absolute;
-  height: 10px;
-  width: 10px;
-
-  background-color: yellow;
-  border-radius: 5px;
-}
-
-.target{
-  background-color: white;
-  left: 50%;
-  top: 50%;
-}
-
-.box {
+.flair {
   /* Flexbox*/
   display: flex;
   flex-direction: row;
@@ -98,4 +82,18 @@ body {
   position: absolute;
   left: 5%;
   top: 75px;
+}
+
+.target{
+  background-color: yellow;
+  position: absolute;
+  cursor: pointer;
+
+  left: 50%;
+  top: 50%;
+
+  height: 20px;
+  width: 20px;
+  
+  border-radius: 10px;
 }

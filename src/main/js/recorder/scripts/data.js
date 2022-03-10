@@ -51,6 +51,8 @@ function MousePath() {
   }
 
   this.calculate = function () {
+    console.log('calculating path')
+
     // Register difference between between points
     // (Useful for quick translation)
 
@@ -58,11 +60,11 @@ function MousePath() {
     this.getSpan()
 
     // Local
-    const size = this.totalPoints.length
+    const size = this.totalPoints
 
     for (let i = 1; i < size; i++) {
-      let point = this.points.get(i),
-        prior = this.points.get(i - 1)
+      let point = this.points[i],
+        prior = this.points[i - 1]
 
       point.x = point.ox - prior.ox
       point.y = point.oy - prior.oy
@@ -77,18 +79,10 @@ let frame = 0,
   blinkCounter = 0
 
 // DOM elements
-let blinker,
-  saveLink,
-  pathCount,
-  startPos = undefined
+let target, blinker, bounds, saveLink, pathCount
 
 // Util
 function save() {
-  let p = new MousePath()
-  p.add(new MousePoint(100, 100, 69))
-
-  paths.add(p)
-
   let data = JSON.stringify(paths, null, 2)
   let file = new Blob([data], { type: 'application/json' })
 
