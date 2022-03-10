@@ -38,6 +38,12 @@ body {
   border-radius: 5px;
 }
 
+.target{
+  background-color: white;
+  left: 50%;
+  top: 50%;
+}
+
 .box {
   /* Flexbox*/
   display: flex;
@@ -91,5 +97,5 @@ body {
   height: 100px;
   position: absolute;
   left: 5%;
-  top: 65px;
+  top: 75px;
 }
