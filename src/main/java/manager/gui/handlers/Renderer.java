@@ -112,7 +112,6 @@ public class Renderer {
         return new MousePoint(ranX, ranY);
     }
 
-    //TODO - prevent path re-use
     public void toggleAutoDebug(boolean enabled) {
         autoDebug.set(enabled);
         controller.renderer.clear();

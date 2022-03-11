@@ -7,6 +7,7 @@ import manager.gui.Controller;
 import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PathFinder {
@@ -15,8 +16,8 @@ public class PathFinder {
 
     ArrayList<Integer> usedPaths;
 
-    // TODO - human random
-    Random ran = new Random();
+    // TODO - human-metric based random
+    ThreadLocalRandom ran = ThreadLocalRandom.current();
 
     Controller controller;
 
@@ -29,21 +30,29 @@ public class PathFinder {
     public PathFinder(Controller controller) {
         this.controller = controller;
         this.usedPaths = new ArrayList<>();
-        this.start = new AtomicReference(null);
-        this.end = new AtomicReference(null);
     }
 
     public void reset() {
-        this.start.set(null);
-        this.end.set(null);
+        this.start = null;
+        this.end = null;
     }
 
     public boolean pointsSet() {
-        return this.start.get() != null && this.end.get() != null;
+        return this.start != null && this.end != null;
     }
 
     public void setPoint(boolean start, MousePoint point) {
-        (start ? this.start : this.end).set(point);
+        if (start) {
+            if (this.start == null)
+                this.start = new AtomicReference<>(point);
+            else
+                this.start.set(point);
+        } else {
+            if (this.end == null)
+                this.end = new AtomicReference<>(point);
+            else
+                this.end.set(point);
+        }
     }
 
     public boolean execute(boolean wait) {
@@ -64,7 +73,7 @@ public class PathFinder {
         // Mark path as recently used
         usedPaths.add(path.hashCode());
 
-        // Translate reference path from start point
+        // Translate reference path to target coords
         path.translate(start.get());
 
         // Verify/adjust path to ensure it touches end point
@@ -136,13 +145,8 @@ public class PathFinder {
 
                     // Re-draw transformed region
                     if (path.region != null) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                        }
-
                         path.region.forEach((i, p) -> {
-                            controller.renderer.drawPoint(p, Color.YELLOW);
+                            controller.renderer.drawPoint(p, Color.PURPLE);
                             try {
                                 Thread.sleep(p.delay);
                             } catch (InterruptedException ignored) {
@@ -150,13 +154,15 @@ public class PathFinder {
                         });
 
                         // Re-draw translated subregion
-                        path.subRegion.forEach((i, p) -> {
-                            controller.renderer.drawPoint(p, Color.YELLOW);
-                            try {
-                                Thread.sleep(p.delay);
-                            } catch (InterruptedException ignored) {
-                            }
-                        });
+                        if (path.subRegion != null) {
+                            path.subRegion.forEach((i, p) -> {
+                                controller.renderer.drawPoint(p, Color.YELLOW);
+                                try {
+                                    Thread.sleep(p.delay);
+                                } catch (InterruptedException ignored) {
+                                }
+                            });
+                        }
                     }
 
                     // Done
@@ -186,7 +192,7 @@ public class PathFinder {
                 int index = path.points.indexOf(next);
 
                 if (path.region != null) {
-                    Color c = path.region.containsKey(index) ? Color.BLUE :
+                    Color c = path.region.containsKey(index) ? Color.BLUE : path.subRegion != null &&
                             path.subRegion.containsKey(index) ? Color.GREEN : Color.YELLOW;
 
                     controller.renderer.drawPoint(next, c);

@@ -53,8 +53,6 @@ public class Buttons {
         ToggleButton btn = (ToggleButton) e.getSource();
 
         if (btn.isSelected()) {
-            // TODO - stop demo  or something?
-
             // Re/Start/Resume
             controller.togglePathButtons(true);
             controller.disableToggleButton(false);
@@ -108,8 +106,8 @@ public class Buttons {
 
             boolean pointA = e.getButton() == MouseButton.PRIMARY;
 
-            boolean reset = pointA ? controller.pathFinder.start.get() != null
-                    : controller.pathFinder.end.get() != null;
+            boolean reset = pointA ? controller.pathFinder.start != null
+                    : controller.pathFinder.end != null;
 
             int x = (int) e.getX(), y = (int) e.getY();
 
@@ -120,10 +118,7 @@ public class Buttons {
             }
 
             // Set point
-            if (pointA)
-                controller.pathFinder.start.set(new MousePoint(x, y));
-            else
-                controller.pathFinder.end.set(new MousePoint(x, y));
+            controller.pathFinder.setPoint(pointA, new MousePoint(x, y));
 
             // Draw point
             controller.renderer.drawPoint(pointA, x, y);
