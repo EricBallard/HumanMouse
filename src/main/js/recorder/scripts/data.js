@@ -88,5 +88,4 @@ function save() {
 
   saveLink.href = URL.createObjectURL(file)
   saveLink.download = 'mouse_paths'
-  saveLink.click()
 }
