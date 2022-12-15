@@ -2,8 +2,6 @@
 _Tool suite designed to manage mouse movement, record and replay human paths within desired bounds._
 
 #### Dependencies
-- Java 11+
-- [JavaFX](https://openjfx.io/openjfx-docs/#install-javafx)
 - [SQLite3](https://www.sqlite.org/index.html)
 
 ![Paths](content/example_paths_drawn.gif)
